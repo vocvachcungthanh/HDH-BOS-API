@@ -19,8 +19,8 @@ class UserSeeder extends Seeder
             [
                 'staff_id'          => 1,
                 'company_id'        => 1,
-                'name'              => 'admin',
-                'user_name'         => 'admin',
+                'name'              => 'bosdev',
+                'user_name'         => 'bosdev',
                 'email'             => 'vocvachcungthanh@gmail.com',
                 'password'          => Hash::make('admin123'),
                 'remember_token'    => Str::random(60),
