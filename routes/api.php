@@ -30,4 +30,11 @@ Route::middleware(['LoginToken'])->group(function () {
     Route::apiResources([
          'company' => CompanyController::class,
     ]);
+
+    Route::middleware(['DatabaseConnection'])->group(function(){
+        Route::apiResources([
+    
+        ]);
+    });
 });
+

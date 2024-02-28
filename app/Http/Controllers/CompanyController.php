@@ -39,11 +39,21 @@ class CompanyController extends Controller
     {
         $company = DB::table('company')
         ->leftJoin('hosting', 'company.hosting_id', '=', 'hosting.id')->where('company.id', $id)
-        ->get();
-        if(count($company)){
+        ->first();
+        if($company){
             return response()->json([
                 'code' => 200,
-                'data' => $company['0'],
+                'data' => [
+                    'address' => $company->address,
+                    'email'   => $company->email,
+                    'logo'    => $company->logo,
+                    'phone'   => $company->phone,
+                    'name'    => $company->name,
+                    'status'  => $company->status,
+                    'tin'     => $company->tin,
+                    'website' => $company->website,
+                    
+                ],
             ],200);
         } else {
             return response()->json([
