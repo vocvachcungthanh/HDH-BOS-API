@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\CompanyController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,21 +26,8 @@ Route::apiResources([
     'login' => LoginController::class
 ]);
 
-// Route::middleware(['LoginToken'])->group(function () {
-//     Route::apiResources([
-//         'admin/auth'                    => AuthController::class,
-//         'admin/sliders'                 => SliderController::class,
-//         'admin/albums'                  => AlbumController::class,
-//         'admin/menus'                   => MenuController::class,
-//         'admin/couples'                 => CoupldeController::class,
-//         'admin/bgs'                     => BgsController::class,
-//         'admin/events'                  => EventController::class,
-//         'admin/countdowns'              => CountDownController::class,
-//         'admin/music'                   => MusicController::class,
-//         'admin/love-story'              => LoveStoryController::class,
-//         'admin/dashboard'               => DashboardController::class,
-//         'admin/guestkbooks'             => GuestkbookController::class,
-//         'admin/bridesmaids-groomsmen'   => BridesmaidsGroomsmenController::class
-
-//     ]);
-// });
+Route::middleware(['LoginToken'])->group(function () {
+    Route::apiResources([
+         'company' => CompanyController::class,
+    ]);
+});
