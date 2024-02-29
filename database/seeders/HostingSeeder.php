@@ -17,9 +17,9 @@ class HostingSeeder extends Seeder
             [
                 'db_host'           => '14.224.164.177',
                 'db_port'           => '1433',
-                'db_database'       => 'HDH_BOS_API',
-                'db_user_name'      => 'quanTriBos',
-                'db_password'       => 'Bos58ToHuu',
+                'db_database'       => 'HDH-BOS-DEV',
+                'db_user_name'      => 'bosdev',
+                'db_password'       => 'bos123456',
                 'created_at'        => now(),
                 'updated_at'        => now()
             ],
