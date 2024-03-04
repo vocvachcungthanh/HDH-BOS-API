@@ -2,10 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use Illuminate\Support\Facades\Crypt;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
+use Config;
+
 
 class DatabaseConnectionMiddleware
 {
@@ -19,31 +22,31 @@ class DatabaseConnectionMiddleware
     public function handle($request, Closure $next)
     {
         // Lấy thông tin kết nối từ cơ sở dữ liệu của công ty từ bảng hosting
-        $hosting = session('hottings');
+        // $hosting = session('hosting');
+        $headers = apache_request_headers();
+        $db =  Crypt::decryptString($headers['db_h']);
 
+        $parts = explode('%', $db);
+
+        $ip = $parts[0];
+        $port = $parts[1];
+        $database = $parts[2];
+        $username = $parts[3];
+        $password = $parts[4];
+        
         // Thiết lập kết nối đến cơ sở dữ liệu của công ty
-        if($hosting){
-            config([
-                'database.connections.dynamic' => [
-                    'driver' => 'sqlsrv', // Thay đổi loại cơ sở dữ liệu nếu cần
-                    'host' => $hosting->db_host,
-                    'port' => $hosting->db_port,
-                    'database' => $hosting->db_database,
-                    'username' => $hosting->db_user_name,
-                    'password' => $hosting->db_password,
-                    'charset' => 'utf8mb4',
-                    'collation' => 'utf8mb4_unicode_ci',
-                    'prefix' => '',
-                    'strict' => true,
-                    'engine' => null,
-                ]
-            ]);
-            
+        if($ip && $port && $database && $username && $password){
+            Config::set('database.connections.sqlsrv.host', $ip);
+            Config::set('database.connections.sqlsrv.port', $port);
+            Config::set('database.connections.sqlsrv.database', $database);
+            Config::set('database.connections.sqlsrv.username', $username);
+            Config::set('database.connections.sqlsrv.password', $password);
             // Kết nối lại cơ sở dữ liệu
-            DB::purge('dynamic');
-            DB::reconnect('dynamic');
+            DB::purge('sqlsrv');
+            DB::reconnect('sqlsrv');
+            \Artisan::call('migrate');
         }
-      
+
         return $next($request);
     }
 }

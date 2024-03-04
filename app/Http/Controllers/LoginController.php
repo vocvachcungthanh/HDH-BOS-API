@@ -43,7 +43,7 @@ class LoginController extends Controller
 
         $dataCheckLogin = [
             'user_name' => $request->user_name,
-            'password' => $request->password,
+            'password'  => $request->password,
         ];
 
 
@@ -57,13 +57,22 @@ class LoginController extends Controller
             $companyId = User::where('id', $id)->pluck("company_id")->first();
 
             if(empty($checkTokenExit)){
-              
+
+                // Set token đăng nhập với trường hợp không chọn lưu mật khẩu 
+                $tokenExpired = now()->addDays(1);
+                $refreshTokenExpired = now()->addDays(2);
+
+                // Set token đăng nhập với trường hợ lưu đăng nhập tôi để là năm 5
+                if($request->remember){
+                    $tokenExpired = now()->addYears(5);
+                    $refreshTokenExpired = now()->addYears(5)->addDays(2);
+                }
 
                 $tokenUser = TokenUser::create([
                     'token' => Str::random(40),
                     'refresh_token' => Str::random(40),
-                    'token_expired' => date('Y-m-d H:i:s', strtotime('+30 day')),
-                    'refresh_token_expired' => date('Y-m-d H:i:s', strtotime('+360 day')),
+                    'token_expired' => $tokenExpired,
+                    'refresh_token_expired' => $tokenExpired,
                     'user_id' => $id,
                 ]);
                 $tokenUser->company_id = $companyId;

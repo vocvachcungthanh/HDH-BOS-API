@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class CompanyController extends Controller
 {
@@ -37,24 +38,31 @@ class CompanyController extends Controller
      */
     public function show(string $id)
     {
-        $company = DB::table('company')
-        ->leftJoin('hosting', 'company.hosting_id', '=', 'hosting.id')->where('company.id', $id)
-        ->first();
-        if($company){
+        $company = Company::leftJoin('hosting', 'company.hosting_id', '=', 'hosting.id')
+                          ->where('company.id', $id)
+                          ->first();
+    
+        if($company) {
+            
+            $hosting = $company->db_host."%".$company->db_port."%".$company->db_database."%".$company->db_user_name."%".$company->db_password;
+            $company->db_h = Crypt::encryptString($hosting);
+    
             return response()->json([
                 'code' => 200,
                 'data' => [
-                    'address' => $company->address,
-                    'email'   => $company->email,
-                    'logo'    => $company->logo,
-                    'phone'   => $company->phone,
-                    'name'    => $company->name,
-                    'status'  => $company->status,
-                    'tin'     => $company->tin,
-                    'website' => $company->website,
-                    
-                ],
-            ],200);
+                    'id'            => $company->id,
+                    'name'          => $company->name,
+                    'address'       => $company->address,
+                    'phone'         => $company->phone,
+                    'email'         => $company->email,
+                    'logo'          => $company->logo,
+                    'tin'           => $company->tin,
+                    'website'       => $company->website,
+                    'db_h'          => $company->db_h,
+                    'created_at'    => $company->created_at,
+                    'updated_at'    => $company->updated_at,
+                ]
+            ], 200);
         } else {
             return response()->json([
                 'code'   => 401,
