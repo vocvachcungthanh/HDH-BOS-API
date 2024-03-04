@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\BlockController;
 
 
 /*
@@ -29,12 +31,14 @@ Route::apiResources([
 Route::middleware(['LoginToken'])->group(function () {
     Route::apiResources([
          'company' => CompanyController::class,
+         'logout' => LogoutController::class
     ]);
 
     Route::middleware(['DatabaseConnection'])->group(function(){
         Route::apiResources([
-    
+            'block' => BlockController::class
         ]);
     });
 });
+
 
