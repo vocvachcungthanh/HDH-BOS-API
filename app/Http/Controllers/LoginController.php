@@ -58,14 +58,14 @@ class LoginController extends Controller
 
             if(empty($checkTokenExit)){
 
-                // Set token đăng nhập với trường hợp không chọn lưu mật khẩu 
-                $tokenExpired = now()->addDays(1);
-                $refreshTokenExpired = now()->addDays(2);
+                // Set token đăng nhập với trường hợp không chọn lưu mật khẩu 5 phút
+                $tokenExpired = now()->addMinutes(5);
+                $refreshTokenExpired = now()->addDays(1);
 
-                // Set token đăng nhập với trường hợ lưu đăng nhập tôi để là năm 5
+                // Set token đăng nhập với trường hợ lưu đăng nhập tôi để là 5 ngày
                 if($request->remember){
-                    $tokenExpired = now()->addYears(5);
-                    $refreshTokenExpired = now()->addYears(5)->addDays(2);
+                    $tokenExpired = now()->addDays(5);
+                    $refreshTokenExpired = now()->addDays(6);
                 }
 
                 $tokenUser = TokenUser::create([

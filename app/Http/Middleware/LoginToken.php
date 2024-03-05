@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\TokenUser;
+use Carbon\Carbon;
 class LoginToken
 {
     /**
@@ -37,6 +38,19 @@ class LoginToken
                     ]
                 ], 403);
             } else {
+                 // Kiểm tra thời hạn của token
+                $tokenCreatedAt = Carbon::parse($checkTokenIsValid->token_expired);
+            
+                $remainingTime = $tokenCreatedAt->diffInSeconds(now());
+
+                if ($remainingTime <= 0) {
+                        return response()->json([
+                            'code'   => 401,
+                            'errors' => [
+                                'message' => 'Token đã hết hạn'
+                            ]
+                        ], 401);
+                }
 
                 return $next($request);
 
