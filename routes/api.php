@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlockController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\CompanyController;
 
 
@@ -29,6 +27,7 @@ Route::group([
 
     Route::post('login', [AuthController::class, 'login']);
     Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
 
@@ -36,8 +35,6 @@ Route::middleware(['auth'])->group(function () {
     Route::apiResources([
         'company' => CompanyController::class,
     ]);
-
-    Route::post('logout', [AuthController::class, 'logout']);
 
     Route::middleware(['DatabaseConnection'])->group(function () {
         Route::apiResources([
