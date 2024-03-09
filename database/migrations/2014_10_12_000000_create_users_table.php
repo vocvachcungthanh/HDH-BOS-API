@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('user_name');
             $table->rememberToken();
+            $table->longText('last_session')->nullable();
             $table->integer('staff_id');
             $table->integer('company_id');
             $table->timestamp('login_at')->nullable();

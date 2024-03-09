@@ -3,10 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlockController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\CompanyController;
 
 
 /*
@@ -20,25 +21,28 @@ use App\Http\Controllers\BlockController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 });
 
-Route::apiResources([
-    'login' => LoginController::class
-]);
 
-Route::middleware(['LoginToken'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::apiResources([
-         'company' => CompanyController::class,
-         'logout' => LogoutController::class
+        'company' => CompanyController::class,
     ]);
 
-    Route::middleware(['DatabaseConnection'])->group(function(){
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::middleware(['DatabaseConnection'])->group(function () {
         Route::apiResources([
             'block' => BlockController::class
         ]);
     });
 });
-
-
