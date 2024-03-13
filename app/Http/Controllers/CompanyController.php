@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 
 class CompanyController extends Controller
@@ -14,7 +13,6 @@ class CompanyController extends Controller
      */
     public function index()
     {
-      
     }
 
     /**
@@ -39,14 +37,14 @@ class CompanyController extends Controller
     public function show(string $id)
     {
         $company = Company::leftJoin('hosting', 'company.hosting_id', '=', 'hosting.id')
-                          ->where('company.id', $id)
-                          ->first();
-    
-        if($company) {
-            
-            $hosting = $company->db_host."%".$company->db_port."%".$company->db_database."%".$company->db_user_name."%".$company->db_password;
+            ->where('company.id', $id)
+            ->first();
+
+        if ($company) {
+
+            $hosting = $company->db_host . "%" . $company->db_port . "%" . $company->db_database . "%" . $company->db_user_name . "%" . $company->db_password;
             $company->db_h = Crypt::encryptString($hosting);
-    
+
             return response()->json([
                 'code' => 200,
                 'data' => [

@@ -13,12 +13,12 @@ class BlockController extends Controller
     public function index()
     {
 
-        $blocks = Block::get();
+        $blocks = Block::select('id', 'name')->get();
 
         return response()->json([
             'code' => 200,
             'data' => $blocks
-        ],200);
+        ], 200);
     }
 
     /**

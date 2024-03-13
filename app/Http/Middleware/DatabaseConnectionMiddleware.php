@@ -4,15 +4,13 @@ namespace App\Http\Middleware;
 
 use Illuminate\Support\Facades\Crypt;
 use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
 use Config;
 
 
 class DatabaseConnectionMiddleware
 {
-     /**
+    /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -33,18 +31,19 @@ class DatabaseConnectionMiddleware
         $database = $parts[2];
         $username = $parts[3];
         $password = $parts[4];
-        
+
+
         // Thiết lập kết nối đến cơ sở dữ liệu của công ty
-        if($ip && $port && $database && $username && $password){
-            Config::set('database.connections.sqlsrv.host', $ip);
-            Config::set('database.connections.sqlsrv.port', $port);
-            Config::set('database.connections.sqlsrv.database', $database);
-            Config::set('database.connections.sqlsrv.username', $username);
-            Config::set('database.connections.sqlsrv.password', $password);
+        if ($ip && $port && $database && $username) {
+            Config::set('database.connections.mysql.host', $ip);
+            Config::set('database.connections.mysql.port', $port);
+            Config::set('database.connections.mysql.database', $database);
+            Config::set('database.connections.mysql.username', $username);
+            Config::set('database.connections.mysql.password', $password);
             // Kết nối lại cơ sở dữ liệu
-            DB::purge('sqlsrv');
-            DB::reconnect('sqlsrv');
-            \Artisan::call('migrate');
+            DB::purge('mysql');
+            DB::reconnect('mysql');
+            // \Artisan::call('migrate');
         }
 
         return $next($request);
