@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FieldController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +45,6 @@ Route::middleware(['auth'])->group(function () {
         ]);
 
         Route::get('field', [FieldController::class, 'index']);
+        Route::get('department', [DepartmentController::class, 'index']);
     });
 });
