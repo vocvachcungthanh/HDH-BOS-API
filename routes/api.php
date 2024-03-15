@@ -46,5 +46,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('field', [FieldController::class, 'index']);
         Route::get('department', [DepartmentController::class, 'index']);
+        Route::post('department-create', [DepartmentController::class, 'create']);
+        Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
     });
 });
