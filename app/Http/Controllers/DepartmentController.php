@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class DepartmentController extends Controller
@@ -99,6 +100,32 @@ class DepartmentController extends Controller
             ], 200);
         }
     }
+
+    public function getListDepartment()
+    {
+        $departments = DB::table('departments as D')
+            ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
+            ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
+            ->selectRaw('
+                D.code,
+                D.name,
+                BL.name as block,
+                (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
+                D.note,
+                LST_Field.name as field,
+                D.id,
+                D.block_id
+            ')
+            ->get();
+
+
+
+        return response()->json([
+            'code' => 200,
+            'data' => $departments
+        ], 200);
+    }
+
 
     private function rules()
     {
