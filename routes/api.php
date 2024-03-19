@@ -7,7 +7,7 @@ use App\Http\Controllers\BlockController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FieldController;
-
+use App\Models\Department;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,5 +48,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('department', [DepartmentController::class, 'index']);
         Route::post('department-create', [DepartmentController::class, 'create']);
         Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
+        Route::get('department-list', [DepartmentController::class, 'getListDepartment']);
     });
 });
