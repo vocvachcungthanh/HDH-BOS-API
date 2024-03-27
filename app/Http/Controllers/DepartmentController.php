@@ -114,16 +114,72 @@ class DepartmentController extends Controller
                 D.note,
                 LST_Field.name as field,
                 D.id,
-                D.block_id
-            ')
+                D.block_id,
+                D.parent_id,
+                D.field_id
+            ')->WHERE('D.status', 1)
             ->get();
-
-
 
         return response()->json([
             'code' => 200,
-            'data' => $departments
+            'data' => $this->getListDepartmentTree($departments)
         ], 200);
+    }
+
+    private function getListDepartmentTree($departments)
+    {
+        $tree = [];
+        $stt = 1;
+        foreach ($departments as $item) {
+            $subtree = [
+                'stt'           => $stt,
+                'id'            => $item->id,
+                'code'          => $item->code,
+                'name'          => $item->name,
+                'block_name'    => $item->block,
+                'parent_name'   => $item->parent,
+                'note'          => $item->note,
+                'field_name'    => $item->field,
+                'block_id'      => $item->block_id,
+                'field_id'      => $item->field_id,
+                'parent_id'     => $item->parent_id,
+                'children'      => $this->children($departments, $item->id)
+            ];
+
+            $tree[] = $subtree;
+        }
+
+        return $tree;
+    }
+
+    private function children($departments, $parentId)
+    {
+        $tree = [];
+        $stt = 1;
+        foreach ($departments as $item) {
+
+            if ($item->parent_id == $parentId) {
+
+                $subtree = [
+                    'stt'           => $stt++,
+                    'id'            => now(),
+                    'code'          => $item->code,
+                    'name'          => $item->name,
+                    'block_name'    => $item->block,
+                    'parent_name'   => $item->parent,
+                    'note'          => $item->note,
+                    'field_name'    => $item->field,
+                    'block_id'      => $item->block_id,
+                    'field_id'      => $item->field_id,
+                    'parent_id'     => $item->parent_id,
+                    'children'      => $this->children($departments, $item->id)
+                ];
+
+                $tree[] = $subtree;
+            }
+        }
+
+        return $tree;
     }
 
 
