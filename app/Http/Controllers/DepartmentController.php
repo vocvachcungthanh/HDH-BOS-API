@@ -82,6 +82,44 @@ class DepartmentController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->rules(), $this->messages(), $this->attributes());
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code'      => 400,
+                'errors'    => $validator->messages()->all()
+            ], 400);
+        }
+
+        $update = Department::where('id', $request->id)->update([
+            'name'          => $request->name,
+            'note'          => $request->desc,
+            'parent_id'     => $request->department,
+            'field_id'      => $request->field,
+            'block_id'      => $request->block,
+            'updated_at'    => now()
+        ]);
+
+        if ($update == 1) {
+            return response()->json([
+                'code' => 200,
+                'data' =>  $update,
+                'message' => "Sửa phòng ban thành công"
+
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Lỗi không sửa được phòng ban",
+                ]
+
+            ], 400);
+        }
+    }
+
     public function createAutoCode()
     {
         $code = Department::generateCode();
