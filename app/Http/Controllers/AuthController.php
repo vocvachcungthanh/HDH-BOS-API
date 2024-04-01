@@ -75,6 +75,8 @@ class AuthController extends Controller
     {
         $refreshToken = $request->refresh_token;
 
+
+
         try {
             $decoded = JWTAuth::getJWTProvider()->decode($refreshToken);
 
@@ -91,15 +93,14 @@ class AuthController extends Controller
 
                 if (!$user) {
                     return response()->json([
-                        'code' => 404,
+                        'code' => 401,
                         'errors' => [
                             'message' => "Tài khoản không tồn tại"
                         ]
-                    ], 404);
+                    ], 401);
                 }
             }
 
-            Auth::invalidate();
             $token = Auth::login($user);
             return response()->json([
                 'code'      => 200,
@@ -108,11 +109,11 @@ class AuthController extends Controller
             ], 200);
         } catch (JWTException $exception) {
             return response()->json([
-                "code" => 500,
+                "code" => 401,
                 'errors' => [
                     'message' => 'refresh token không tồn tại'
                 ]
-            ], [500]);
+            ], [401]);
         }
     }
 
@@ -127,7 +128,7 @@ class AuthController extends Controller
             'company_id'    => Auth::user()->company_id,
             'access_token'  => $accessToken,
             'token_type'    => 'bearer',
-            'expires_in'    => Auth::factory()->getTTL() * 60,
+            'expires_in'    => Auth::factory()->getTTL(),
             'refresh_token' => $this->createRefreshToken()
         ];
     }
