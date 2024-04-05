@@ -96,7 +96,7 @@ class DepartmentController extends Controller
         $update = Department::where('id', $request->id)->update([
             'name'          => $request->name,
             'note'          => $request->desc,
-            'parent_id'     => $request->department,
+            'parent_id'     => $request->department_id,
             'field_id'      => $request->field,
             'block_id'      => $request->block,
             'updated_at'    => now()
@@ -225,7 +225,7 @@ class DepartmentController extends Controller
     {
         return [
             'name'       => 'required',
-            'department' => 'required',
+            'department_id' => 'required',
             'block'      => 'required',
             'field'      =>  'required',
         ];
@@ -235,7 +235,7 @@ class DepartmentController extends Controller
     {
         return [
             'name.required'          => ':attribute không được bỏ trống',
-            'department.required'    => ':attribute không được bỏ trống',
+            'department_id.required' => ':attribute không được bỏ trống',
             'block.required'         => ':attributes không được bỏ trống',
             'field.required'         => ':attributes không được bỏ trống'
         ];
@@ -245,7 +245,7 @@ class DepartmentController extends Controller
     {
         return [
             'name'          => "Tên phòng ban",
-            'department'    => "Phòng ban trực thuộc",
+            'department_id'    => "Phòng ban trực thuộc",
             'block'         => "Thuộc khối",
             'filter'        => "Lĩnh vực"
         ];

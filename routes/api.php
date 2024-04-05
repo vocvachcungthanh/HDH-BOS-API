@@ -7,7 +7,10 @@ use App\Http\Controllers\BlockController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FieldController;
-use App\Models\Department;
+use App\Http\Controllers\AccountTypeController;
+use App\Http\Controllers\PostionController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -45,10 +48,15 @@ Route::middleware(['auth'])->group(function () {
         ]);
 
         Route::get('field', [FieldController::class, 'index']);
+
         Route::get('department', [DepartmentController::class, 'index']);
+        Route::post('department-update', [DepartmentController::class, 'update']);
         Route::post('department-create', [DepartmentController::class, 'create']);
         Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
         Route::get('department-list', [DepartmentController::class, 'getListDepartment']);
-        Route::post('department-update', [DepartmentController::class, 'update']);
+
+        Route::get('account-type', [AccountTypeController::class, 'index']);
+        Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
+        Route::post('create-postion', [PostionController::class, 'create']);
     });
 });
