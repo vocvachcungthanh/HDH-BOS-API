@@ -41,7 +41,8 @@ class DepartmentController extends Controller
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules(), $this->messages(), $this->attributes());
+
+        $validator = Validator::make($request->all(), $this->rules($request), $this->messages(), $this->attributes());
 
         if ($validator->fails()) {
             return response()->json([
@@ -84,7 +85,7 @@ class DepartmentController extends Controller
 
     public function update(Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules(), $this->messages(), $this->attributes());
+        $validator = Validator::make($request->all(), $this->rules($request), $this->messages(), $this->attributes());
 
         if ($validator->fails()) {
             return response()->json([
@@ -221,33 +222,50 @@ class DepartmentController extends Controller
     }
 
 
-    private function rules()
+    private function rules(Request $request)
     {
-        return [
+        $rules = [
             'name'       => 'required',
-            'department_id' => 'required',
-            'block'      => 'required',
-            'field'      =>  'required',
+            'department' => 'required|numeric',
+            'block'      => 'required|numeric',
+            'field'      => 'required|numeric',
         ];
+
+        if ($request->has('id')) {
+            $rules['code'] = 'required';
+            $roles['id']   = 'required';
+        } else {
+            $rules['code'] = 'required|unique:departments';
+        }
+
+        return $rules;
     }
 
     private function messages()
     {
         return [
-            'name.required'          => ':attribute không được bỏ trống',
-            'department_id.required' => ':attribute không được bỏ trống',
-            'block.required'         => ':attributes không được bỏ trống',
-            'field.required'         => ':attributes không được bỏ trống'
+            'id.required'           => ':attribute cần sửa không tồn tại',
+            'code.required'         => ':attribute không được bỏ trống',
+            'code.unique'           => ':attribute đã tồn tại kiểm tra lại',
+            'name.required'         => ':attribute không được bỏ trống',
+            'department.required'   => ':attribute không được bỏ trống',
+            'department.numeric'    => ':attribute phòng ban trực thuộc phải là số',
+            'block.required'        => ':attribute không được bỏ trống',
+            'block.numeric'         => ':attribute khối phải là số',
+            'field.required'        => ':attribute không được bỏ trống',
+            'field.numeric'         => ':attribute phải là số'
         ];
     }
 
     private function attributes()
     {
         return [
+            'id'            => "Phòng ban",
+            'code'          => "Mã phòng ban",
             'name'          => "Tên phòng ban",
-            'department_id'    => "Phòng ban trực thuộc",
+            'department'    => "Phòng ban trực thuộc",
             'block'         => "Thuộc khối",
-            'filter'        => "Lĩnh vực"
+            'field'         => "Lĩnh vực"
         ];
     }
 }

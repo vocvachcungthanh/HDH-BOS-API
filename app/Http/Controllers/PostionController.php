@@ -3,11 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Postion;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostionController extends Controller
 {
+    public function index(Request $request, $page)
+    {
+
+        $validator = Validator::make($request->all(), $this->rulesPage(), $this->messagesPage(), $this->attributesPage());
+
+        if ($validator->fails()) {
+            return response()->json([
+                'code'      => 400,
+                'errors'    => $validator->messages()->all()
+            ], 400);
+        }
+
+        $per_page = $request->pageSize;
+
+        $postions = DB::table('postions as PB')
+            ->leftJoin('LST_Account_Type as AT', 'PB.account_type_id', '=', 'AT.id')
+            ->leftJoin('departments as D', 'PB.department_id', '=', 'D.id')
+            ->selectRaw('
+            PB.code,
+            PB.name,
+            AT.name as account_type_name,
+            D.name As department_name,
+            PB.benefits,
+            PB.permissions,
+            PB.id,
+            PB.account_type_id,
+            PB.department_id
+
+        ')->WHERE('PB.status', 1)
+
+            ->paginate($per_page, ['*'], 'page', $page);
+
+        $this->createStt($postions->items());
+
+        return response()->json([
+            'code'  => 200,
+            'data'  => $postions
+        ]);
+    }
+
     public function createAutoCode()
     {
         $code = Postion::generateCode();
@@ -70,11 +112,101 @@ class PostionController extends Controller
         }
     }
 
+    public function deleteAll(Request $request)
+    {
+        $idsToDelete = $request->ids;
+
+        $deleteAll = Postion::whereIn('id', $idsToDelete)->delete();
+
+        if ($deleteAll > 0) {
+            return response()->json([
+                'code'  => 200,
+                'data'  => $deleteAll,
+                'message'   => "Xóa vị trí thành công"
+            ], 200);
+        } elseif ($deleteAll == 0) {
+            return response()->json([
+                'code'  => 400,
+                'errors' => [
+                    'message'   => "Không tồn tại vị trí cần xóa"
+                ]
+            ], 400);
+        } else {
+            return response()->json([
+                'code'  => 400,
+                'errors' => [
+                    'message'   => "Xóa vị trí thất bại"
+                ]
+            ], 400);
+        }
+    }
+
+    // Hàm mergeByDepartment
+    private function mergeByDepartment($paginator)
+    {
+        // Lấy dữ liệu của trang
+        $items = $paginator->items();
+
+        // Tạo một mảng kết quả rỗng
+        $grouped = [];
+        $stt = 1;
+
+        // Duyệt qua mỗi phần tử trong mảng dữ liệu
+        foreach ($items as $item) {
+            $item->stt = $stt++;
+            // Kiểm tra xem phần tử đã được nhóm dựa trên department_id chưa
+            if (!isset($grouped[$item->department_id])) {
+                // Nếu chưa, tạo một phần tử mới trong mảng kết quả
+                $grouped[$item->department_id] = [
+
+                    'stt'               => $item->stt,
+                    'id'                => now(),
+                    'department_name'   => $item->department_name,
+                    'children'          => []
+                ];
+            }
+
+            // Thêm phần tử vào mảng con của phần tử nhóm tương ứng
+            $grouped[$item->department_id]['children'][] = [
+                'stt'               => $item->stt,
+                'account_type_id'   => $item->account_type_id,
+                'account_type_name' => $item->account_type_name,
+                'benefits'          => $item->benefits,
+                'code'              => $item->code,
+                'id'                => $item->id,
+                'name'              => $item->name,
+                'permissions'       => $item->permissions
+            ];
+        }
+
+        // Tạo một đối tượng LengthAwarePaginator mới với dữ liệu đã gộp
+        $newPaginator = new LengthAwarePaginator(
+            collect(array_values($grouped)),
+            $paginator->total(),
+            $paginator->perPage(),
+            $paginator->currentPage(),
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        return $newPaginator;
+    }
+
+    private function createStt($data)
+    {
+        $stt = 1;
+
+        foreach ($data as $item) {
+            $item->stt = $stt++;
+        }
+
+        return $data;
+    }
+
     private function rules()
     {
         return [
             'name'              => 'required',
-            'code'              => 'require',
+            'code'              => 'required',
             'account_type_id'   => 'required',
             'department_id'     => 'required',
         ];
@@ -91,7 +223,6 @@ class PostionController extends Controller
         ];
     }
 
-
     private function attributes()
     {
         return [
@@ -100,6 +231,33 @@ class PostionController extends Controller
             'account_type_id'   => "Loại tài khoản",
             'department_id'     => "Phòng ban",
 
+        ];
+    }
+
+    private function rulesPage()
+    {
+
+        return [
+            'pageSize' => 'required|numeric',
+            'current'  => 'required|numeric'
+        ];
+    }
+
+    private function messagesPage()
+    {
+        return [
+            'pageSize.required'    => ':attribute không được bỏ trống',
+            'current.required'     => ':attribute không được bỏ trống',
+            'pageSize.numeric'     => ':attribute phải là số',
+            'current.numeric'      => ':attribute phải là số',
+        ];
+    }
+
+    private function attributesPage()
+    {
+        return [
+            "pageSize" => "Số bản ghi",
+            'current'  => 'Số trang'
         ];
     }
 }
