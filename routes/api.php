@@ -55,8 +55,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
         Route::get('department-list', [DepartmentController::class, 'getListDepartment']);
 
-        Route::get('account-type', [AccountTypeController::class, 'index']);
+        Route::post('postions/{page}', [PostionController::class, 'index']);
         Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
         Route::post('create-postion', [PostionController::class, 'create']);
+        Route::post('delete-postion', [PostionController::class, 'deleteAll']);
+
+        Route::get('account-type', [AccountTypeController::class, 'index']);
     });
 });
