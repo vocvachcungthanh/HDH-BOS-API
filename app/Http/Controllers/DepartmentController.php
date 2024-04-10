@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -167,8 +168,23 @@ class DepartmentController extends Controller
 
     private function getListDepartmentTree($departments)
     {
+        $postions = DB::table('postions as P')
+            ->leftJoin('LST_Account_Type as AT', 'P.account_type_id', '=', 'AT.id')
+            ->leftJoin('departments as D', 'P.department_id', '=', 'D.id')
+            ->selectRaw('
+                p.code,
+                P.name,
+                AT.name as name_account_type,
+                benefits,
+                permissions,
+                P.department_id
+            ')
+            ->WHERE('P.status', 1)
+            ->get();
+
         $tree = [];
         $stt = 1;
+
         foreach ($departments as $item) {
             $subtree = [
                 'stt'           => $stt,
@@ -182,7 +198,8 @@ class DepartmentController extends Controller
                 'block_id'      => $item->block_id,
                 'field_id'      => $item->field_id,
                 'parent_id'     => $item->parent_id,
-                'children'      => $this->children($departments, $item->id)
+                'postions'      => $this->subordinatePosition($postions, $item->id),
+                'children'      => $this->children($departments, $item->id, $postions),
             ];
 
             $tree[] = $subtree;
@@ -191,7 +208,7 @@ class DepartmentController extends Controller
         return $tree;
     }
 
-    private function children($departments, $parentId)
+    private function children($departments, $parentId, $postions)
     {
         $tree = [];
         $stt = 1;
@@ -211,7 +228,8 @@ class DepartmentController extends Controller
                     'block_id'      => $item->block_id,
                     'field_id'      => $item->field_id,
                     'parent_id'     => $item->parent_id,
-                    'children'      => $this->children($departments, $item->id)
+                    'postions'      => $this->subordinatePosition($postions, $item->id),
+                    'children'      => $this->children($departments, $item->id, $postions)
                 ];
 
                 $tree[] = $subtree;
@@ -219,6 +237,20 @@ class DepartmentController extends Controller
         }
 
         return $tree;
+    }
+
+    private function subordinatePosition($postions, $id)
+    {
+        $data = [];
+        $stt = 1;
+        foreach ($postions as $item) {
+            if ($item->department_id == $id) {
+                $item->stt = $stt++;
+                $data[] = $item;
+            }
+        }
+
+        return $data;
     }
 
 
