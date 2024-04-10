@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Postion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class PostionController extends Controller
 {
@@ -116,6 +118,18 @@ class PostionController extends Controller
     {
         $idsToDelete = $request->ids;
 
+        $isCheck = Helper::isNumericArray($idsToDelete);
+
+        if (!$isCheck) {
+            return response()->json([
+                'code'  => 400,
+                'errors'    => [
+                    'message' => "Dữ liệu cần xóa không hợp lệ"
+                ]
+            ], 400);
+        }
+
+        //  Khi làm phân nhân viên cần check thêm cây xem vị trí đó có nhân viên không 
         $deleteAll = Postion::whereIn('id', $idsToDelete)->delete();
 
         if ($deleteAll > 0) {
