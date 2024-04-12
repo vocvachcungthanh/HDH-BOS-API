@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\Department;
+use App\Models\Postion;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -166,6 +168,169 @@ class DepartmentController extends Controller
         ], 200);
     }
 
+    public function deleteDepartment(Request $request)
+    {
+        $check  = $this->confirmationBeforeDeletionDepartment($request->id);
+
+        if ($check !== true) {
+            return $check;
+        }
+
+        if ($check) {
+            $delete = Department::where('id', $request->id)->update(['status' => 0]);
+
+            if ($delete > 0) {
+                return response()->json([
+                    'code' => 200,
+                    'data' => $delete,
+                    'message' => "Xóa phòng ban thành công"
+                ], 200);
+            } else {
+                return response()->json([
+                    'code' => 400,
+                    'errors' => [
+                        'message' => "Lỗi không thể xóa phòng ban kiểm tra lại"
+                    ]
+                ], 400);
+            }
+        }
+    }
+
+    public function trashDepartemntCount()
+    {
+        $total = Department::where('status', 0)->count();
+
+        return response()->json([
+            'code' => 200,
+            'data' => $total
+        ], 200);
+    }
+
+    public function getTrashDepartment()
+    {
+        $departments = DB::table('departments as D')
+            ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
+            ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
+            ->selectRaw('
+            D.code,
+            D.name,
+            BL.name as block,
+            (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
+            D.note,
+            LST_Field.name as field,
+            D.id
+        
+        ')->WHERE('D.status', 0)
+            ->get();
+
+        $stt = 1;
+
+        foreach ($departments as $item) {
+
+            $item->stt = $stt++;
+        }
+
+        return response()->json([
+            'code' => 200,
+            'data' => $departments
+        ], 200);
+    }
+
+    public function emptyTrashDepartment(Request $request)
+    {
+        $idsToDelete = $request->ids;
+
+        $isCheck = Helper::isNumericArray($idsToDelete);
+
+        if (!$isCheck) {
+            return response()->json([
+                'code'  => 400,
+                'errors'    => [
+                    'message' => "Dữ liệu cần xóa không hợp lệ"
+                ]
+            ], 400);
+        }
+
+        $deleteAll = Department::whereIn('id', $idsToDelete)->delete();
+
+        if ($deleteAll > 0) {
+            return response()->json([
+                'code'  => 200,
+                'data'  => $deleteAll,
+                'message'   => "Xóa phòng ban thành công"
+            ], 200);
+        } elseif ($deleteAll == 0) {
+            return response()->json([
+                'code'  => 400,
+                'errors' => [
+                    'message'   => "Không tồn tại phòng ban cần xóa"
+                ]
+            ], 400);
+        } else {
+            return response()->json([
+                'code'  => 400,
+                'errors' => [
+                    'message'   => "Xóa phòng ban thất bại"
+                ]
+            ], 400);
+        }
+    }
+
+    private function confirmationBeforeDeletionDepartment($id)
+    {
+        // Kiểm trả dữ liệu truyền lên hợp lệ không
+        if (!is_numeric($id)) {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Dữ liệu phòng ban cần xóa không hợp lệ"
+                ]
+            ], 400);
+        }
+
+        // Kiểm tra xem  phòng bạn có tồn tại phòng ban con không
+        if (Department::where([
+            'parent_id' => $id,
+            'status'    => 1
+        ])->count() > 0) {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Không thể xóa do phòng ban, bạn muốn xóa đang tồn tại phòng ban con"
+                ]
+            ], 400);
+        }
+
+        // kiểm tra xme phòng ban có ví trí chưa
+
+        if (Postion::where([
+            'department_id' => $id,
+            'status'    => 1,
+        ])->count() > 0) {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Không thể xóa do phòng bạn bạn muốn xóa đang có vị trí"
+                ]
+            ], 400);
+        }
+
+
+
+        // Kiểm tra phòng ban cần xóa tồn tại không
+
+        if (Department::where('id', $id)->count() <= 0) {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Phòng ban cần xóa không tồn tại"
+                ]
+            ], 400);
+        }
+
+        return true;
+    }
+
     private function getListDepartmentTree($departments)
     {
         $postions = DB::table('postions as P')
@@ -252,7 +417,6 @@ class DepartmentController extends Controller
 
         return $data;
     }
-
 
     private function rules(Request $request)
     {

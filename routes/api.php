@@ -50,10 +50,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('field', [FieldController::class, 'index']);
 
         Route::get('department', [DepartmentController::class, 'index']);
+        Route::get('trash-department-list', [DepartmentController::class, 'getTrashDepartment']);
+        Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
+        Route::get('trash-department-count', [DepartmentController::class, 'trashDepartemntCount']);
+        Route::get('department-list', [DepartmentController::class, 'getListDepartment']);
         Route::post('department-update', [DepartmentController::class, 'update']);
         Route::post('department-create', [DepartmentController::class, 'create']);
-        Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
-        Route::get('department-list', [DepartmentController::class, 'getListDepartment']);
+        Route::post('delete-department', [DepartmentController::class, 'deleteDepartment']);
+        Route::post('empty-department', [DepartmentController::class, 'emptyTrashDepartment']);
 
         Route::post('postions/{page}', [PostionController::class, 'index']);
         Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
