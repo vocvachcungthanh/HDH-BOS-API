@@ -58,9 +58,9 @@ class DepartmentController extends Controller
             'name'          => $request->name,
             'code'          => $request->code,
             'note'          => $request->desc,
-            'parent_id'     => $request->department,
-            'field_id'      => $request->field,
-            'block_id'      => $request->block,
+            'parent_id'     => $request->department_id,
+            'field_id'      => $request->field_id,
+            'block_id'      => $request->block_id,
             'status'        => 1,
             'created_at'    => now()
         ]);
@@ -91,18 +91,27 @@ class DepartmentController extends Controller
         $validator = Validator::make($request->all(), $this->rules($request), $this->messages(), $this->attributes());
 
         if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            $formattedErrors = [];
+
+            foreach ($errors as $field => $message) {
+
+                $formattedErrors[$field] = $message[0];
+            }
+
             return response()->json([
                 'code'      => 400,
-                'errors'    => $validator->messages()->all()
+                'errors'    => $formattedErrors
             ], 400);
         }
+
 
         $update = Department::where('id', $request->id)->update([
             'name'          => $request->name,
             'note'          => $request->desc,
             'parent_id'     => $request->department_id,
-            'field_id'      => $request->field,
-            'block_id'      => $request->block,
+            'field_id'      => $request->field_id,
+            'block_id'      => $request->block_id,
             'updated_at'    => now()
         ]);
 
@@ -276,6 +285,41 @@ class DepartmentController extends Controller
         }
     }
 
+    public function restoreTranshDepartment(Request $request)
+    {
+        $idUpdate = $request->ids;
+
+        $isCheck = Helper::isNumericArray($idUpdate);
+
+        if (!$isCheck) {
+            return response()->json([
+                'code'  => 400,
+                'errors'    => [
+                    'message' => "Dữ liệu cần khôi phục không hợp lệ"
+                ]
+            ], 400);
+        }
+
+        $updateAll = Department::whereIn('id', $idUpdate)->update(['status' => 1]);
+
+        if ($updateAll > 0) {
+            return response()->json([
+                'code' => 200,
+                'data' =>  $updateAll,
+                'message' => "Khôi phục dữ liệu thành công"
+
+            ], 200);
+        } else {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Lỗi không khôi phục dữ liệu kiểm tra lại",
+                ]
+
+            ], 400);
+        }
+    }
+
     private function confirmationBeforeDeletionDepartment($id)
     {
         // Kiểm trả dữ liệu truyền lên hợp lệ không
@@ -352,19 +396,19 @@ class DepartmentController extends Controller
 
         foreach ($departments as $item) {
             $subtree = [
-                'stt'           => $stt,
-                'id'            => $item->id,
-                'code'          => $item->code,
-                'name'          => $item->name,
-                'block_name'    => $item->block,
-                'parent_name'   => $item->parent,
-                'note'          => $item->note,
-                'field_name'    => $item->field,
-                'block_id'      => $item->block_id,
-                'field_id'      => $item->field_id,
-                'parent_id'     => $item->parent_id,
-                'postions'      => $this->subordinatePosition($postions, $item->id),
-                'children'      => $this->children($departments, $item->id, $postions),
+                'stt'               => $stt++,
+                'id'                => $item->id,
+                'code'              => $item->code,
+                'name'              => $item->name,
+                'block_name'        => $item->block,
+                'parent_name'       => $item->parent,
+                'note'              => $item->note,
+                'field_name'        => $item->field,
+                'block_id'          => $item->block_id,
+                'field_id'          => $item->field_id,
+                'parent_id'         => $item->parent_id,
+                'postions'          => $this->subordinatePosition($postions, $item->id),
+                'subordinate'   => $this->subordinate($departments, $item->id, $postions),
             ];
 
             $tree[] = $subtree;
@@ -373,7 +417,7 @@ class DepartmentController extends Controller
         return $tree;
     }
 
-    private function children($departments, $parentId, $postions)
+    private function subordinate($departments, $parentId, $postions)
     {
         $tree = [];
         $stt = 1;
@@ -382,19 +426,16 @@ class DepartmentController extends Controller
             if ($item->parent_id == $parentId) {
 
                 $subtree = [
-                    'stt'           => $stt++,
-                    'id'            => now(),
-                    'code'          => $item->code,
-                    'name'          => $item->name,
-                    'block_name'    => $item->block,
-                    'parent_name'   => $item->parent,
-                    'note'          => $item->note,
-                    'field_name'    => $item->field,
-                    'block_id'      => $item->block_id,
-                    'field_id'      => $item->field_id,
-                    'parent_id'     => $item->parent_id,
-                    'postions'      => $this->subordinatePosition($postions, $item->id),
-                    'children'      => $this->children($departments, $item->id, $postions)
+                    'stt'               => $stt++,
+                    'id'                => $item->id . '_' . $item->code,
+                    'code'              => $item->code,
+                    'name'              => $item->name,
+                    'block_name'        => $item->block,
+                    'parent_name'       => $item->parent,
+                    'note'              => $item->note,
+                    'field_name'        => $item->field,
+                    'postions'          => $this->subordinatePosition($postions, $item->id),
+                    'children'   => $this->subordinate($departments, $item->id, $postions)
                 ];
 
                 $tree[] = $subtree;
@@ -421,10 +462,10 @@ class DepartmentController extends Controller
     private function rules(Request $request)
     {
         $rules = [
-            'name'       => 'required',
-            'department' => 'required|numeric',
-            'block'      => 'required|numeric',
-            'field'      => 'required|numeric',
+            'name'          => 'required',
+            'department_id' => 'required|numeric',
+            'block_id'      => 'required|numeric',
+            'field_id'      => 'required|numeric',
         ];
 
         if ($request->has('id')) {
@@ -440,16 +481,16 @@ class DepartmentController extends Controller
     private function messages()
     {
         return [
-            'id.required'           => ':attribute cần sửa không tồn tại',
-            'code.required'         => ':attribute không được bỏ trống',
-            'code.unique'           => ':attribute đã tồn tại kiểm tra lại',
-            'name.required'         => ':attribute không được bỏ trống',
-            'department.required'   => ':attribute không được bỏ trống',
-            'department.numeric'    => ':attribute phòng ban trực thuộc phải là số',
-            'block.required'        => ':attribute không được bỏ trống',
-            'block.numeric'         => ':attribute khối phải là số',
-            'field.required'        => ':attribute không được bỏ trống',
-            'field.numeric'         => ':attribute phải là số'
+            'id.required'               => ':attribute cần sửa không tồn tại',
+            'code.required'             => ':attribute không được bỏ trống',
+            'code.unique'               => ':attribute đã tồn tại kiểm tra lại',
+            'name.required'             => ':attribute không được bỏ trống',
+            'department_id.required'    => ':attribute không được bỏ trống',
+            'department_id.numeric'     => ':attribute phòng ban trực thuộc phải là số',
+            'block_id.required'         => ':attribute không được bỏ trống',
+            'block_id.numeric'          => ':attribute khối phải là số',
+            'field_id.required'         => ':attribute không được bỏ trống',
+            'field_id.numeric'          => ':attribute phải là số'
         ];
     }
 
@@ -459,9 +500,9 @@ class DepartmentController extends Controller
             'id'            => "Phòng ban",
             'code'          => "Mã phòng ban",
             'name'          => "Tên phòng ban",
-            'department'    => "Phòng ban trực thuộc",
-            'block'         => "Thuộc khối",
-            'field'         => "Lĩnh vực"
+            'department_id' => "Phòng ban trực thuộc",
+            'block_id'      => "Thuộc khối",
+            'field_id'      => "Lĩnh vực"
         ];
     }
 }
