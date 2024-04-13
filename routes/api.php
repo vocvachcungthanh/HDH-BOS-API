@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('department-create', [DepartmentController::class, 'create']);
         Route::post('delete-department', [DepartmentController::class, 'deleteDepartment']);
         Route::post('empty-department', [DepartmentController::class, 'emptyTrashDepartment']);
+        Route::post('restore-department', [DepartmentController::class, 'restoreTranshDepartment']);
 
         Route::post('postions/{page}', [PostionController::class, 'index']);
         Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
