@@ -9,6 +9,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\PostionController;
+use App\Http\Controllers\SliderController;
 use App\Models\Department;
 
 /*
@@ -59,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('empty-department', [DepartmentController::class, 'emptyTrashDepartment']);
         Route::post('restore-department', [DepartmentController::class, 'restoreTranshDepartment']);
         Route::get('search-department/{keySearch}', [DepartmentController::class, 'searchDepartment']);
+        Route::post('search-slider-unit', [DepartmentController::class, 'getSearchSliderUnit']);
 
         Route::post('postions/{page}', [PostionController::class, 'index']);
         Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
@@ -66,5 +68,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('delete-postion', [PostionController::class, 'deleteAll']);
 
         Route::get('account-type', [AccountTypeController::class, 'index']);
+
+        Route::get('slider-unit', [SliderController::class, 'getSliderUnit']);
+        Route::post('slicer-setting-update', [SliderController::class, 'updateSliderUnit']);
     });
 });
