@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th4 19, 2024 lúc 04:45 AM
+-- Thời gian đã tạo: Th4 24, 2024 lúc 01:46 AM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -92,28 +92,8 @@ CREATE TABLE `migrations` (
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2014_10_12_000000_create_users_table', 1),
-(2, '2019_12_14_000001_create_personal_access_tokens_table', 1),
 (3, '2024_02_27_141440_create_company_table', 1),
 (4, '2024_02_27_142752_create_hosting_table', 1);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `personal_access_tokens`
---
-
-CREATE TABLE `personal_access_tokens` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) NOT NULL,
-  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `abilities` text DEFAULT NULL,
-  `last_used_at` timestamp NULL DEFAULT NULL,
-  `expires_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -143,7 +123,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `user_name`, `remember_token`, `last_session`, `staff_id`, `company_id`, `login_at`, `email_verified_at`, `change_password_at`, `created_at`, `updated_at`) VALUES
-(1, 'bosdev', 'vocvachcungthanh@gmail.com', '$2y$12$SMwIlTuf/bhT5HRNnHj6WuzVBduiNnBqUg/HxB.mjs2ZgIVzbl3g6', 'bosdev', '8hhYF1uM50QYlNI8ALKPYyxriQ2cbdckXYDdsxDeNCUE1TDsIawiMlfI3l2O', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaGRoLWJvcy1kZXYueHl6L2hkaC1ib3MtYXBpL3B1YmxpYy9hcGkvYXV0aC9sb2dpbiIsImlhdCI6MTcxMzQ2MDYyOCwiZXhwIjoxNzEzNDYyNDI4LCJuYmYiOjE3MTM0NjA2MjgsImp0aSI6Imk5SWk2WTFCRFRUbTlwNXAiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.mAzBFIpVNEV4yjwXzblVwQ7zIXztoMTEYHUtGEwhoXw', 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-04-18 10:17:08'),
+(1, 'bosdev', 'vocvachcungthanh@gmail.com', '$2y$12$SMwIlTuf/bhT5HRNnHj6WuzVBduiNnBqUg/HxB.mjs2ZgIVzbl3g6', 'bosdev', '8hhYF1uM50QYlNI8ALKPYyxriQ2cbdckXYDdsxDeNCUE1TDsIawiMlfI3l2O', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaGRoLWJvcy1kZXYueHl6L2hkaC1ib3MtYXBpL3B1YmxpYy9hcGkvYXV0aC9yZWZyZXNoIiwiaWF0IjoxNzEzODk5MzM3LCJleHAiOjE3MTM4OTk0NTcsIm5iZiI6MTcxMzg5OTMzNywianRpIjoiSW9XNm9FWndxMGtxZWdSNiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Xv-UKM3fxM5iLkW45skPDcn12pCNvZXHNg--ROSoFyc', 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-04-23 12:08:57'),
 (2, 'admin2', 'vocvachcungthanh2@gmail.com', '$2y$12$HA3rCNUAAoGY5v7fkW1T/e/RukOupzo7vwm8VTOQy4OAsQJrmu1Nm', 'admin2', 'Rwl9psFOO0KG52XyXwRBZvQai0tzm3dYwH1R008d5JmNUJtMtMdYDLc7WIcJ', NULL, 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-03-12 09:40:44');
 
 --
@@ -167,14 +147,6 @@ ALTER TABLE `hosting`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
-
---
--- Chỉ mục cho bảng `personal_access_tokens`
---
-ALTER TABLE `personal_access_tokens`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
-  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
 -- Chỉ mục cho bảng `users`
@@ -202,13 +174,7 @@ ALTER TABLE `hosting`
 -- AUTO_INCREMENT cho bảng `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- AUTO_INCREMENT cho bảng `personal_access_tokens`
---
-ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
