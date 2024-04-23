@@ -367,7 +367,49 @@ class DepartmentController extends Controller
         }
     }
 
+    public function getSearchSliderUnit(Request $request)
+    {
+        $departments = DB::table('departments as D')
+            ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
+            ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
+            ->selectRaw('
+                D.code,
+                D.name,
+                BL.name as block,
+                (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
+                D.note,
+                LST_Field.name as field,
+                D.id,
+                D.block_id,
+                D.parent_id,
+                D.field_id
+            ')
+            ->where('D.status', 1)
+            ->get();
 
+        $departemntTree =  $this->getListDepartmentTree($departments);
+
+        $params = $request->only(['block_id', 'id', 'parent_id', 'field_id']);
+
+        $filteredData = [];
+
+        foreach ($departemntTree as $item) {
+
+            $blockIdMatch = isset($params['block_id']) ? $item['block_id'] == $params['block_id'] : true;
+            $idMatch = isset($params['id']) ? $item['id'] == $params['id'] : true;
+            $parentIdMatch = isset($params['parent_id']) ? $item['parent_id'] == $params['parent_id'] : true;
+            $fieldIdMatch = isset($params['field_id']) ? $item['field_id'] == $params['field_id'] : true;
+
+            if ($blockIdMatch && $idMatch && $parentIdMatch && $fieldIdMatch) {
+                $filteredData[] = $item;
+            }
+        }
+
+        return response()->json([
+            'code' => 200,
+            'data' => $filteredData
+        ], 200);
+    }
 
     private function confirmationBeforeDeletionDepartment($id)
     {
