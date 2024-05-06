@@ -9,7 +9,7 @@ use App\Models\SlicerSetting;
 
 class SliderController extends Controller
 {
-    public function getSliderUnit()
+    public function getSlider()
     {
         $slidersUnit = DB::table('slicer as S')
             ->leftJoin('slicer_setting as SS', 'SS.slicer_id', '=', 'S.id')
@@ -20,9 +20,9 @@ class SliderController extends Controller
             SS.title,
             SS.count,
             SS.icon,
-            SS.status
+            SS.status,
+            S.type
         ')->WHERE('S.status', 1)
-            ->WHERE('S.type', 'unit')
             ->get();
 
         return response()->json([
@@ -31,7 +31,8 @@ class SliderController extends Controller
         ], 200);
     }
 
-    public function updateSliderUnit(Request $request)
+
+    public function updateSlider(Request $request)
     {
         $validator = Validator::make($request->all(), $this->rules(), $this->messages(), $this->attributes());
 

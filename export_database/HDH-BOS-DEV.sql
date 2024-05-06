@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th4 24, 2024 lúc 01:46 AM
+-- Thời gian đã tạo: Th5 07, 2024 lúc 01:36 AM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.2.4
 
@@ -74,7 +74,7 @@ INSERT INTO `departments` (`id`, `code`, `name`, `note`, `parent_id`, `field_id`
 (27, 'PB027', 'Chi nhánh', NULL, 9, 1, 1, '2024-04-13 02:23:06', '2024-04-13 02:23:06', 1),
 (28, 'PB028', 'Hà Nội', NULL, 25, 1, 1, '2024-04-13 02:33:23', '2024-04-13 03:37:55', 1),
 (29, 'PB029', 'Miền trung', NULL, 27, 1, 1, '2024-04-13 02:34:58', '2024-04-13 02:34:58', 1),
-(30, 'PB030', 'BP digital marketing', NULL, 10, 2, 1, '2024-04-13 03:02:16', '2024-04-13 03:02:16', 1),
+(30, 'PB030', 'BP digital marketing', NULL, 10, 2, 1, '2024-04-13 03:02:16', '2024-05-02 10:19:58', 1),
 (31, 'PB031', 'Bộ phận maketing', NULL, 10, 2, 1, '2024-04-13 03:03:01', '2024-04-13 03:45:48', 1),
 (32, 'PB032', 'Tổ lắp ráp 2', NULL, 11, 4, 1, '2024-04-13 03:07:26', '2024-04-15 02:44:31', 3);
 
@@ -228,11 +228,17 @@ CREATE TABLE `slicer` (
 --
 
 INSERT INTO `slicer` (`id`, `name`, `note`, `status`, `type`, `created_at`, `updated_at`) VALUES
-(1, 'slicerCode', 'slicer mã phòng ban', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(2, 'slicerName', 'slicer tên phòng ban', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(3, 'slicerBlock', 'slicer khối', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(4, 'slicerField', 'slicer lĩnh vực', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(5, 'slicerParent', 'slicer Trực thuộc', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14');
+(1, 'slicerCode', 'slicer mã phòng ban', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(2, 'slicerName', 'slicer tên phòng ban', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(3, 'slicerBlock', 'slicer khối', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(4, 'slicerField', 'slicer lĩnh vực', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(5, 'slicerParent', 'slicer Trực thuộc', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(6, 'slicerUnit', 'slicer tên phòng ban', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(7, 'slicerCodePostion', 'slicer mã vị trí', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(8, 'slicerNamePostion', 'slicer tên vị trí', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(9, 'slicerAccountType', 'slicer loại tài khoản', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(10, 'slicerPermissions', 'slicer quyền hạn', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
+(11, 'slicerBenefits', 'slicer quyền lợi', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02');
 
 -- --------------------------------------------------------
 
@@ -257,11 +263,17 @@ CREATE TABLE `slicer_setting` (
 --
 
 INSERT INTO `slicer_setting` (`id`, `slicer_id`, `title`, `caption`, `count`, `icon`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Mã phòng ban', 'Mã phòng ban', 2, 'barcode', 1, '2024-04-21 10:00:38', '2024-04-22 05:10:09'),
-(2, 2, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 1, '2024-04-21 10:00:38', '2024-04-23 08:10:58'),
-(3, 3, 'Khối', 'Khối', 2, 'block', 1, '2024-04-21 10:00:38', '2024-04-22 01:27:05'),
-(4, 4, 'Lĩnh vực', 'Lĩnh vực', 2, 'box-plot', 1, '2024-04-21 10:00:38', '2024-04-23 08:49:29'),
-(5, 5, 'Trực thuộc', 'Trực thuộc', 2, 'apartment', 1, '2024-04-21 10:00:38', '2024-04-22 22:01:56');
+(1, 1, 'Mã phòng ban', 'Mã phòng ban', 3, 'barcode', 1, '2024-05-05 13:17:29', '2024-05-05 14:33:26'),
+(2, 2, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 0, '2024-05-05 13:17:29', '2024-05-05 14:32:31'),
+(3, 3, 'Khối', 'Khối', 2, 'block', 1, '2024-05-05 13:17:29', '2024-05-05 14:29:52'),
+(4, 4, 'Lĩnh vực', 'Lĩnh vực', 1, 'box-plot', 1, '2024-05-05 13:17:29', '2024-05-05 14:25:26'),
+(5, 5, 'Trực thuộc', 'Trực thuộc', 2, 'apartment', 0, '2024-05-05 13:17:29', '2024-05-05 14:33:30'),
+(6, 6, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
+(7, 7, 'Mã vị trí', 'Mã vị trí', 2, 'barcode', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
+(8, 8, 'Tên vị trí', 'Tên vị trí', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
+(9, 9, 'Loại tài khoản', 'Loại tài khoản', 2, 'account-book', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
+(10, 10, 'Quyền hạn', 'Quyền hạn', 2, 'fire', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
+(11, 11, 'Quyền lợi', 'Quyền lợi', 2, 'funnel-plot', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -362,13 +374,13 @@ ALTER TABLE `postions`
 -- AUTO_INCREMENT cho bảng `slicer`
 --
 ALTER TABLE `slicer`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT cho bảng `slicer_setting`
 --
 ALTER TABLE `slicer_setting`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
