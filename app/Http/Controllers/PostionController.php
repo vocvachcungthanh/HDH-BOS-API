@@ -155,55 +155,60 @@ class PostionController extends Controller
         }
     }
 
-    // Hàm mergeByDepartment
-    private function mergeByDepartment($paginator)
+
+    public function getSearchSlicerPostion(Request $request, $page)
     {
-        // Lấy dữ liệu của trang
-        $items = $paginator->items();
+        // Validate the request
+        $validator = Validator::make($request->all(), $this->rulesPage(), $this->messagesPage(), $this->attributesPage());
 
-        // Tạo một mảng kết quả rỗng
-        $grouped = [];
-        $stt = 1;
-
-        // Duyệt qua mỗi phần tử trong mảng dữ liệu
-        foreach ($items as $item) {
-            $item->stt = $stt++;
-            // Kiểm tra xem phần tử đã được nhóm dựa trên department_id chưa
-            if (!isset($grouped[$item->department_id])) {
-                // Nếu chưa, tạo một phần tử mới trong mảng kết quả
-                $grouped[$item->department_id] = [
-
-                    'stt'               => $item->stt,
-                    'id'                => now(),
-                    'department_name'   => $item->department_name,
-                    'children'          => []
-                ];
-            }
-
-            // Thêm phần tử vào mảng con của phần tử nhóm tương ứng
-            $grouped[$item->department_id]['children'][] = [
-                'stt'               => $item->stt,
-                'account_type_id'   => $item->account_type_id,
-                'account_type_name' => $item->account_type_name,
-                'benefits'          => $item->benefits,
-                'code'              => $item->code,
-                'id'                => $item->id,
-                'name'              => $item->name,
-                'permissions'       => $item->permissions
-            ];
+        if ($validator->fails()) {
+            return response()->json([
+                'code'      => 400,
+                'errors'    => $validator->messages()->all()
+            ], 400);
         }
 
-        // Tạo một đối tượng LengthAwarePaginator mới với dữ liệu đã gộp
-        $newPaginator = new LengthAwarePaginator(
-            collect(array_values($grouped)),
-            $paginator->total(),
-            $paginator->perPage(),
-            $paginator->currentPage(),
-            ['path' => LengthAwarePaginator::resolveCurrentPath()]
-        );
+        // Fetch the page size from request
+        $per_page = $request->input('pageSize', 10);
 
-        return $newPaginator;
+        // Prepare the query
+        $query = DB::table('postions as PB')
+            ->leftJoin('LST_Account_Type as AT', 'PB.account_type_id', '=', 'AT.id')
+            ->leftJoin('departments as D', 'PB.department_id', '=', 'D.id')
+            ->selectRaw('
+            PB.code,
+            PB.name,
+            AT.name as account_type_name,
+            D.name as department_name,
+            PB.benefits,
+            PB.permissions,
+            PB.id,
+            PB.account_type_id,
+            PB.department_id
+        ')
+            ->where('PB.status', 1);
+
+        // Apply filters if any
+        if ($request->has('account_type_id')) {
+            $query->where('PB.account_type_id', $request->input('account_type_id'));
+        }
+        if ($request->has('department_id')) {
+            $query->where('PB.department_id', $request->input('department_id'));
+        }
+        if ($request->has('id')) {
+            $query->where('PB.id', $request->input('id'));
+        }
+
+        // Paginate the results
+        $positions = $query->paginate($per_page, ['*'], 'page', $page);
+
+        // Return the paginated results
+        return response()->json([
+            'code' => 200,
+            'data' => $positions
+        ], 200);
     }
+
 
     private function createStt($data)
     {
