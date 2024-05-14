@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('create-postion', [PostionController::class, 'create']);
         Route::post('delete-postion', [PostionController::class, 'deleteAll']);
         Route::post('search-slicer-postion/{page}', [PostionController::class, 'getSearchSlicerPostion']);
+        Route::post('search-postion/{keySearch}/{page}', [PostionController::class, 'searchPostion']);
 
         Route::get('account-type', [AccountTypeController::class, 'index']);
 

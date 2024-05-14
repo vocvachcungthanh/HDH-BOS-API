@@ -7,7 +7,7 @@ use App\Models\Postion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Pagination\LengthAwarePaginator;
+use function PHPUnit\Framework\isEmpty;
 
 
 class PostionController extends Controller
@@ -155,7 +155,6 @@ class PostionController extends Controller
         }
     }
 
-
     public function getSearchSlicerPostion(Request $request, $page)
     {
         // Validate the request
@@ -209,6 +208,61 @@ class PostionController extends Controller
         ], 200);
     }
 
+    public function searchPostion(Request $request, string $keySearch, $page)
+    {
+        if (!isEmpty($keySearch)) {
+            return response()->json([
+                'code' => 400,
+                'errors' => [
+                    'message' => "Nhập từ khóa tìm kiếm"
+                ]
+            ], 400);
+        } else {
+
+            $validator = Validator::make($request->all(), $this->rulesPage(), $this->messagesPage(), $this->attributesPage());
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'code'      => 400,
+                    'errors'    => $validator->messages()->all()
+                ], 400);
+            }
+
+            $per_page = $request->pageSize;
+            $search = DB::table('postions as P')
+                ->leftJoin('LST_Account_Type as AT', 'P.account_type_id', '=', 'AT.id')
+                ->leftJoin('departments as D', 'P.department_id', '=', 'D.id')
+                ->selectRaw('
+                    P.code,
+                    P.name,
+                    AT.name as account_type_name,
+                    D.name As department_name,
+                    P.benefits,
+                    P.permissions,
+                    P.id,
+                    P.account_type_id,
+                    P.department_id
+
+                ')->WHERE('P.status', 1)
+
+                ->where(function ($query) use ($keySearch) {
+                    $query->where('P.code', 'like', '%' . $keySearch . '%')
+                        ->orWhere('P.name', 'like', '%' . $keySearch . '%')
+                        ->orWhere('D.name', 'like', '%' . $keySearch . '%')
+                        ->orWhere('AT.name', 'like', '%' . $keySearch . '%')
+                        ->orWhere('P.benefits', 'like', '%' . $keySearch . '%')
+                        ->orWhere('P.permissions', 'like', '%' . $keySearch . '%');
+                })
+                ->paginate($per_page, ['*'], 'page', $page);
+
+            $this->createStt($search->items());
+
+            return response()->json([
+                'code'  => 200,
+                'data'  => $search
+            ]);
+        }
+    }
 
     private function createStt($data)
     {
