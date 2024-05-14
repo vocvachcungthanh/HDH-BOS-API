@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: localhost
--- Thời gian đã tạo: Th4 24, 2024 lúc 01:46 AM
--- Phiên bản máy phục vụ: 10.4.28-MariaDB
--- Phiên bản PHP: 8.2.4
+-- Host: localhost
+-- Generation Time: May 15, 2024 at 01:53 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `HDH-BOS-QUAN-LY`
+-- Database: `HDH-BOS-QUAN-LY`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `company`
+-- Table structure for table `company`
 --
 
 CREATE TABLE `company` (
@@ -43,7 +43,7 @@ CREATE TABLE `company` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `company`
+-- Dumping data for table `company`
 --
 
 INSERT INTO `company` (`id`, `name`, `address`, `phone`, `email`, `logo`, `tin`, `website`, `hosting_id`, `status`, `created_at`, `updated_at`) VALUES
@@ -52,7 +52,7 @@ INSERT INTO `company` (`id`, `name`, `address`, `phone`, `email`, `logo`, `tin`,
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `hosting`
+-- Table structure for table `hosting`
 --
 
 CREATE TABLE `hosting` (
@@ -68,7 +68,7 @@ CREATE TABLE `hosting` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `hosting`
+-- Dumping data for table `hosting`
 --
 
 INSERT INTO `hosting` (`id`, `db_host`, `db_port`, `db_database`, `db_user_name`, `db_password`, `status`, `created_at`, `updated_at`) VALUES
@@ -77,7 +77,7 @@ INSERT INTO `hosting` (`id`, `db_host`, `db_port`, `db_database`, `db_user_name`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `migrations`
+-- Table structure for table `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -87,18 +87,38 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `migrations`
+-- Dumping data for table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2014_10_12_000000_create_users_table', 1),
 (3, '2024_02_27_141440_create_company_table', 1),
-(4, '2024_02_27_142752_create_hosting_table', 1);
+(4, '2024_02_27_142752_create_hosting_table', 1),
+(12, '2019_12_14_000001_create_personal_access_tokens_table', 2);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `users`
+-- Table structure for table `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -119,65 +139,79 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `user_name`, `remember_token`, `last_session`, `staff_id`, `company_id`, `login_at`, `email_verified_at`, `change_password_at`, `created_at`, `updated_at`) VALUES
-(1, 'bosdev', 'vocvachcungthanh@gmail.com', '$2y$12$SMwIlTuf/bhT5HRNnHj6WuzVBduiNnBqUg/HxB.mjs2ZgIVzbl3g6', 'bosdev', '8hhYF1uM50QYlNI8ALKPYyxriQ2cbdckXYDdsxDeNCUE1TDsIawiMlfI3l2O', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaGRoLWJvcy1kZXYueHl6L2hkaC1ib3MtYXBpL3B1YmxpYy9hcGkvYXV0aC9yZWZyZXNoIiwiaWF0IjoxNzEzODk5MzM3LCJleHAiOjE3MTM4OTk0NTcsIm5iZiI6MTcxMzg5OTMzNywianRpIjoiSW9XNm9FWndxMGtxZWdSNiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Xv-UKM3fxM5iLkW45skPDcn12pCNvZXHNg--ROSoFyc', 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-04-23 12:08:57'),
+(1, 'bosdev', 'vocvachcungthanh@gmail.com', '$2y$12$SMwIlTuf/bhT5HRNnHj6WuzVBduiNnBqUg/HxB.mjs2ZgIVzbl3g6', 'bosdev', '8hhYF1uM50QYlNI8ALKPYyxriQ2cbdckXYDdsxDeNCUE1TDsIawiMlfI3l2O', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaGRoLWJvcy1kZXYueHl6L2hkaC1ib3MtYXBpL3B1YmxpYy9hcGkvYXV0aC9yZWZyZXNoIiwiaWF0IjoxNzE1NjkyNTczLCJleHAiOjE3MTU2OTYxNzMsIm5iZiI6MTcxNTY5MjU3MywianRpIjoiem5sd3hLM2o1R25YWkdJMCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.h-D-VktJjl2IdOPYKb88YN0Era_FJJBUxnsl6Dx4Iao', 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-05-14 06:16:13'),
 (2, 'admin2', 'vocvachcungthanh2@gmail.com', '$2y$12$HA3rCNUAAoGY5v7fkW1T/e/RukOupzo7vwm8VTOQy4OAsQJrmu1Nm', 'admin2', 'Rwl9psFOO0KG52XyXwRBZvQai0tzm3dYwH1R008d5JmNUJtMtMdYDLc7WIcJ', NULL, 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-03-12 09:40:44');
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `company`
+-- Indexes for table `company`
 --
 ALTER TABLE `company`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `hosting`
+-- Indexes for table `hosting`
 --
 ALTER TABLE `hosting`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `migrations`
+-- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `users`
+-- Indexes for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
+
+--
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `company`
+-- AUTO_INCREMENT for table `company`
 --
 ALTER TABLE `company`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT cho bảng `hosting`
+-- AUTO_INCREMENT for table `hosting`
 --
 ALTER TABLE `hosting`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT cho bảng `migrations`
+-- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT cho bảng `users`
+-- AUTO_INCREMENT for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;

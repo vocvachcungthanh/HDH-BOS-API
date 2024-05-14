@@ -2,14 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Máy chủ: localhost
-<<<<<<< HEAD
--- Thời gian đã tạo: Th4 24, 2024 lúc 01:46 AM
-=======
--- Thời gian đã tạo: Th5 13, 2024 lúc 07:44 PM
->>>>>>> 015aac234bbd1e6184b81036776d8a27f60b51b6
--- Phiên bản máy phục vụ: 10.4.28-MariaDB
--- Phiên bản PHP: 8.2.4
+-- Host: localhost
+-- Generation Time: May 15, 2024 at 01:53 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -22,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Cơ sở dữ liệu: `HDH-BOS-DEV`
+-- Database: `HDH-BOS-DEV`
 --
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `departments`
+-- Table structure for table `departments`
 --
 
 CREATE TABLE `departments` (
@@ -45,7 +41,7 @@ CREATE TABLE `departments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `departments`
+-- Dumping data for table `departments`
 --
 
 INSERT INTO `departments` (`id`, `code`, `name`, `note`, `parent_id`, `field_id`, `status`, `created_at`, `updated_at`, `block_id`) VALUES
@@ -78,19 +74,14 @@ INSERT INTO `departments` (`id`, `code`, `name`, `note`, `parent_id`, `field_id`
 (27, 'PB027', 'Chi nhánh', NULL, 9, 1, 1, '2024-04-13 02:23:06', '2024-04-13 02:23:06', 1),
 (28, 'PB028', 'Hà Nội', NULL, 25, 1, 1, '2024-04-13 02:33:23', '2024-04-13 03:37:55', 1),
 (29, 'PB029', 'Miền trung', NULL, 27, 1, 1, '2024-04-13 02:34:58', '2024-04-13 02:34:58', 1),
-<<<<<<< HEAD
-(30, 'PB030', 'BP digital marketing', NULL, 10, 2, 1, '2024-04-13 03:02:16', '2024-04-13 03:02:16', 1),
-(31, 'PB031', 'Bộ phận maketing', NULL, 10, 2, 1, '2024-04-13 03:03:01', '2024-04-13 03:45:48', 1),
-=======
 (30, 'PB030', 'BP digital marketing', NULL, 10, 2, 1, '2024-04-13 03:02:16', '2024-05-02 10:19:58', 1),
 (31, 'PB031', 'Bộ phận maketing', NULL, 10, 2, 1, '2024-04-13 03:03:01', '2024-05-08 17:45:33', 1),
->>>>>>> 015aac234bbd1e6184b81036776d8a27f60b51b6
 (32, 'PB032', 'Tổ lắp ráp 2', NULL, 11, 4, 1, '2024-04-13 03:07:26', '2024-04-15 02:44:31', 3);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `LST_Account_Type`
+-- Table structure for table `LST_Account_Type`
 --
 
 CREATE TABLE `LST_Account_Type` (
@@ -103,7 +94,7 @@ CREATE TABLE `LST_Account_Type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `LST_Account_Type`
+-- Dumping data for table `LST_Account_Type`
 --
 
 INSERT INTO `LST_Account_Type` (`id`, `name`, `note`, `status`, `created_at`, `updated_at`) VALUES
@@ -115,7 +106,7 @@ INSERT INTO `LST_Account_Type` (`id`, `name`, `note`, `status`, `created_at`, `u
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `LST_Block`
+-- Table structure for table `LST_Block`
 --
 
 CREATE TABLE `LST_Block` (
@@ -128,7 +119,7 @@ CREATE TABLE `LST_Block` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `LST_Block`
+-- Dumping data for table `LST_Block`
 --
 
 INSERT INTO `LST_Block` (`id`, `name`, `note`, `status`, `created_at`, `updated_at`) VALUES
@@ -139,7 +130,7 @@ INSERT INTO `LST_Block` (`id`, `name`, `note`, `status`, `created_at`, `updated_
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `LST_Field`
+-- Table structure for table `LST_Field`
 --
 
 CREATE TABLE `LST_Field` (
@@ -152,7 +143,7 @@ CREATE TABLE `LST_Field` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `LST_Field`
+-- Dumping data for table `LST_Field`
 --
 
 INSERT INTO `LST_Field` (`id`, `name`, `note`, `status`, `created_at`, `updated_at`) VALUES
@@ -164,7 +155,20 @@ INSERT INTO `LST_Field` (`id`, `name`, `note`, `status`, `created_at`, `updated_
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `migrations`
+-- Table structure for table `LST_Gender`
+--
+
+CREATE TABLE `LST_Gender` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -174,18 +178,20 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `migrations`
+-- Dumping data for table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2024_04_04_080955_create_postions_table', 3),
 (12, '2024_04_21_162254_create_slicer_setting_table', 5),
-(13, '2024_04_21_161909_create_slicer_table', 6);
+(13, '2024_04_21_161909_create_slicer_table', 6),
+(14, '2024_05_14_133449_create_staffs_table', 7),
+(15, '2024_05_14_152752_create_lst_gender_table', 8);
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `postions`
+-- Table structure for table `postions`
 --
 
 CREATE TABLE `postions` (
@@ -202,7 +208,7 @@ CREATE TABLE `postions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `postions`
+-- Dumping data for table `postions`
 --
 
 INSERT INTO `postions` (`id`, `code`, `name`, `account_type_id`, `department_id`, `benefits`, `permissions`, `status`, `created_at`, `updated_at`) VALUES
@@ -219,7 +225,7 @@ INSERT INTO `postions` (`id`, `code`, `name`, `account_type_id`, `department_id`
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `slicer`
+-- Table structure for table `slicer`
 --
 
 CREATE TABLE `slicer` (
@@ -233,17 +239,10 @@ CREATE TABLE `slicer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `slicer`
+-- Dumping data for table `slicer`
 --
 
 INSERT INTO `slicer` (`id`, `name`, `note`, `status`, `type`, `created_at`, `updated_at`) VALUES
-<<<<<<< HEAD
-(1, 'slicerCode', 'slicer mã phòng ban', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(2, 'slicerName', 'slicer tên phòng ban', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(3, 'slicerBlock', 'slicer khối', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(4, 'slicerField', 'slicer lĩnh vực', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14'),
-(5, 'slicerParent', 'slicer Trực thuộc', 1, 'unit', '2024-04-21 10:17:14', '2024-04-21 10:17:14');
-=======
 (1, 'slicerCode', 'slicer mã phòng ban', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
 (2, 'slicerName', 'slicer tên phòng ban', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
 (3, 'slicerBlock', 'slicer khối', 1, 'unit', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
@@ -255,12 +254,11 @@ INSERT INTO `slicer` (`id`, `name`, `note`, `status`, `type`, `created_at`, `upd
 (9, 'slicerAccountType', 'slicer loại tài khoản', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
 (10, 'slicerPermissions', 'slicer quyền hạn', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02'),
 (11, 'slicerBenefits', 'slicer quyền lợi', 1, 'postion', '2024-05-05 13:08:02', '2024-05-05 13:08:02');
->>>>>>> 015aac234bbd1e6184b81036776d8a27f60b51b6
 
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `slicer_setting`
+-- Table structure for table `slicer_setting`
 --
 
 CREATE TABLE `slicer_setting` (
@@ -276,36 +274,62 @@ CREATE TABLE `slicer_setting` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `slicer_setting`
+-- Dumping data for table `slicer_setting`
 --
 
 INSERT INTO `slicer_setting` (`id`, `slicer_id`, `title`, `caption`, `count`, `icon`, `status`, `created_at`, `updated_at`) VALUES
-<<<<<<< HEAD
-(1, 1, 'Mã phòng ban', 'Mã phòng ban', 2, 'barcode', 1, '2024-04-21 10:00:38', '2024-04-22 05:10:09'),
-(2, 2, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 1, '2024-04-21 10:00:38', '2024-04-23 08:10:58'),
-(3, 3, 'Khối', 'Khối', 2, 'block', 1, '2024-04-21 10:00:38', '2024-04-22 01:27:05'),
-(4, 4, 'Lĩnh vực', 'Lĩnh vực', 2, 'box-plot', 1, '2024-04-21 10:00:38', '2024-04-23 08:49:29'),
-(5, 5, 'Trực thuộc', 'Trực thuộc', 2, 'apartment', 1, '2024-04-21 10:00:38', '2024-04-22 22:01:56');
-=======
 (1, 1, 'Mã phòng ban', 'Mã phòng ban', 3, 'barcode', 1, '2024-05-05 13:17:29', '2024-05-13 08:36:46'),
 (2, 2, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-13 08:36:48'),
 (3, 3, 'Khối', 'Khối', 2, 'block', 1, '2024-05-05 13:17:29', '2024-05-13 08:58:09'),
 (4, 4, 'Lĩnh vực', 'Lĩnh vực', 2, 'box-plot', 1, '2024-05-05 13:17:29', '2024-05-13 09:17:54'),
 (5, 5, 'Trực thuộc', 'Trực thuộc', 2, 'apartment', 1, '2024-05-05 13:17:29', '2024-05-13 08:36:53'),
-(6, 6, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
-(7, 7, 'Mã vị trí', 'Mã vị trí', 2, 'barcode', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
-(8, 8, 'Tên vị trí', 'Tên vị trí', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
-(9, 9, 'Loại tài khoản', 'Loại tài khoản', 2, 'account-book', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29'),
-(10, 10, 'Quyền hạn', 'Quyền hạn', 2, 'fire', 0, '2024-05-05 13:17:29', '2024-05-13 10:41:25'),
-(11, 11, 'Quyền lợi', 'Quyền lợi', 2, 'funnel-plot', 1, '2024-05-05 13:17:29', '2024-05-05 13:17:29');
->>>>>>> 015aac234bbd1e6184b81036776d8a27f60b51b6
+(6, 6, 'Tên phòng ban', 'Tên phòng ban', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-13 21:39:43'),
+(7, 7, 'Mã vị trí', 'Mã vị trí', 3, 'barcode', 1, '2024-05-05 13:17:29', '2024-05-13 20:37:57'),
+(8, 8, 'Tên vị trí', 'Tên vị trí', 2, 'build', 1, '2024-05-05 13:17:29', '2024-05-13 22:05:08'),
+(9, 9, 'Loại tài khoản', 'Loại tài khoản', 2, 'account-book', 1, '2024-05-05 13:17:29', '2024-05-13 21:36:36'),
+(10, 10, 'Quyền hạn', 'Quyền hạn', 2, 'fire', 1, '2024-05-05 13:17:29', '2024-05-14 06:16:42'),
+(11, 11, 'Quyền lợi', 'Quyền lợi', 1, 'funnel-plot', 0, '2024-05-05 13:17:29', '2024-05-13 22:02:15');
+
+-- --------------------------------------------------------
 
 --
--- Chỉ mục cho các bảng đã đổ
+-- Table structure for table `staffs`
+--
+
+CREATE TABLE `staffs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `code` varchar(255) NOT NULL COMMENT 'Mã nhân viên',
+  `last_name` varchar(255) NOT NULL COMMENT 'Họ',
+  `first_name` varchar(255) NOT NULL COMMENT 'Tên',
+  `nickname` varchar(255) DEFAULT NULL COMMENT 'Tên thường gọi',
+  `nationnal_id_card` varchar(255) DEFAULT NULL COMMENT 'Căn cước công dân',
+  `phone` int(11) DEFAULT NULL COMMENT 'Số điện thoại',
+  `email` varchar(255) DEFAULT NULL,
+  `date_of_birth` int(11) NOT NULL COMMENT 'Ngày sinh',
+  `month_of_birth` int(11) NOT NULL COMMENT 'Tháng sinh',
+  `year_of_birth` int(11) NOT NULL COMMENT 'Năm sinh',
+  `address` varchar(255) DEFAULT NULL COMMENT 'Địa chỉ',
+  `hometown` varchar(255) NOT NULL COMMENT 'Quê quán',
+  `avatar` varchar(255) NOT NULL COMMENT 'Ảnh đại diện',
+  `start_date_of_employment` datetime NOT NULL COMMENT 'Ngày bắt đầu làm việc',
+  `end_date_of_employment` datetime DEFAULT NULL COMMENT 'Ngày nghỉ việc',
+  `gender_id` bigint(20) DEFAULT NULL COMMENT 'id giới tinh',
+  `department_id` bigint(20) DEFAULT NULL COMMENT 'id phòng ban',
+  `postion_id` bigint(20) DEFAULT NULL COMMENT 'id vị trí',
+  `work_regime_id` bigint(20) DEFAULT NULL COMMENT 'id chế độ làm việc',
+  `sor_id` bigint(20) DEFAULT NULL COMMENT 'id nguồn hồ sơ',
+  `es_id` bigint(20) DEFAULT NULL COMMENT 'id trạng thái làm việc',
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Indexes for dumped tables
 --
 
 --
--- Chỉ mục cho bảng `departments`
+-- Indexes for table `departments`
 --
 ALTER TABLE `departments`
   ADD PRIMARY KEY (`id`),
@@ -314,106 +338,122 @@ ALTER TABLE `departments`
   ADD KEY `block_id_3` (`block_id`);
 
 --
--- Chỉ mục cho bảng `LST_Account_Type`
+-- Indexes for table `LST_Account_Type`
 --
 ALTER TABLE `LST_Account_Type`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `LST_Block`
+-- Indexes for table `LST_Block`
 --
 ALTER TABLE `LST_Block`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `LST_Field`
+-- Indexes for table `LST_Field`
 --
 ALTER TABLE `LST_Field`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `migrations`
+-- Indexes for table `LST_Gender`
+--
+ALTER TABLE `LST_Gender`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `postions`
+-- Indexes for table `postions`
 --
 ALTER TABLE `postions`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `slicer`
+-- Indexes for table `slicer`
 --
 ALTER TABLE `slicer`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `slicer_setting`
+-- Indexes for table `slicer_setting`
 --
 ALTER TABLE `slicer_setting`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT cho các bảng đã đổ
+-- Indexes for table `staffs`
+--
+ALTER TABLE `staffs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT cho bảng `departments`
+-- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
--- AUTO_INCREMENT cho bảng `LST_Account_Type`
+-- AUTO_INCREMENT for table `LST_Account_Type`
 --
 ALTER TABLE `LST_Account_Type`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `LST_Block`
+-- AUTO_INCREMENT for table `LST_Block`
 --
 ALTER TABLE `LST_Block`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `LST_Field`
+-- AUTO_INCREMENT for table `LST_Field`
 --
 ALTER TABLE `LST_Field`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT cho bảng `migrations`
+-- AUTO_INCREMENT for table `LST_Gender`
 --
-ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+ALTER TABLE `LST_Gender`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `postions`
+-- AUTO_INCREMENT for table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `postions`
 --
 ALTER TABLE `postions`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
--- AUTO_INCREMENT cho bảng `slicer`
+-- AUTO_INCREMENT for table `slicer`
 --
 ALTER TABLE `slicer`
-<<<<<<< HEAD
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-=======
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
->>>>>>> 015aac234bbd1e6184b81036776d8a27f60b51b6
 
 --
--- AUTO_INCREMENT cho bảng `slicer_setting`
+-- AUTO_INCREMENT for table `slicer_setting`
 --
 ALTER TABLE `slicer_setting`
-<<<<<<< HEAD
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-=======
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
->>>>>>> 015aac234bbd1e6184b81036776d8a27f60b51b6
+
+--
+-- AUTO_INCREMENT for table `staffs`
+--
+ALTER TABLE `staffs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
