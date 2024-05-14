@@ -48,6 +48,54 @@ class SlicerSeeder extends Seeder
                 'created_at'    => now(),
                 'updated_at'    => now()
             ],
+
+            [
+                'name'          => 'slicerUnit',
+                'note'          => 'slicer tên phòng ban',
+                'type'          => 'postion',
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ],
+
+            [
+                'name'          => 'slicerCode',
+                'note'          => 'slicer mã vị trí',
+                'type'          => 'postion',
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ],
+
+            [
+                'name'          => 'slicerName',
+                'note'          => 'slicer tên vị trí',
+                'type'          => 'postion',
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ],
+
+            [
+                'name'          => 'slicerAccountType',
+                'note'          => 'slicer loại tài khoản',
+                'type'          => 'postion',
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ],
+
+            [
+                'name'          => 'slicerPermissions',
+                'note'          => 'slicer quyền hạn',
+                'type'          => 'postion',
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ],
+
+            [
+                'name'          => 'slicerBenefits',
+                'note'          => 'slicer quyền lợi',
+                'type'          => 'postion',
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ],
         ]);
     }
 }

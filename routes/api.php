@@ -60,16 +60,18 @@ Route::middleware(['auth'])->group(function () {
         Route::post('empty-department', [DepartmentController::class, 'emptyTrashDepartment']);
         Route::post('restore-department', [DepartmentController::class, 'restoreTranshDepartment']);
         Route::get('search-department/{keySearch}', [DepartmentController::class, 'searchDepartment']);
-        Route::post('search-slider-unit', [DepartmentController::class, 'getSearchSliderUnit']);
+        Route::post('search-slicer-unit', [DepartmentController::class, 'getSearchSlicerUnit']);
 
         Route::post('postions/{page}', [PostionController::class, 'index']);
         Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
         Route::post('create-postion', [PostionController::class, 'create']);
         Route::post('delete-postion', [PostionController::class, 'deleteAll']);
+        Route::post('search-slicer-postion/{page}', [PostionController::class, 'getSearchSlicerPostion']);
+        Route::post('search-postion/{keySearch}/{page}', [PostionController::class, 'searchPostion']);
 
         Route::get('account-type', [AccountTypeController::class, 'index']);
 
-        Route::get('slider-unit', [SliderController::class, 'getSliderUnit']);
-        Route::post('slicer-setting-update', [SliderController::class, 'updateSliderUnit']);
+        Route::get('slider-list', [SliderController::class, 'getSlider']);
+        Route::post('slicer-setting-update', [SliderController::class, 'updateSlider']);
     });
 });

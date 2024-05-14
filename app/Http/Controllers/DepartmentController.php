@@ -367,7 +367,7 @@ class DepartmentController extends Controller
         }
     }
 
-    public function getSearchSliderUnit(Request $request)
+    public function getSearchSlicerUnit(Request $request)
     {
         $departments = DB::table('departments as D')
             ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
