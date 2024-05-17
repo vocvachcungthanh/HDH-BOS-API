@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('LST_Sor', function (Blueprint $table) {
+        Schema::create('LST_Work_Regime', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Tên nguồn hồ sơ');
+            $table->string('name')->comment('Tên chế độ làm việc');
+            $table->text('note')->nullable()->comment('Ghi chú chế độ làm việc');
+            $table->decimal('nwd')->nullable()->comment('Số ngày làm việc');
+            $table->decimal('ndo')->nullable()->comment('Số ngày nghỉ');
             $table->boolean('status')->default(1);
             $table->timestamps();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('LST_Sor');
+        Schema::dropIfExists('LST_Work_Regime');
     }
 };

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('LST_Gender', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->comment('Tên giới tính');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
