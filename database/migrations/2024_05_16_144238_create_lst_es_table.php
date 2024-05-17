@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('LST_Sor', function (Blueprint $table) {
+        Schema::create('LST_Es', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment('Tên nguồn hồ sơ');
+            $table->string('name')->comment('Tên trạng thái');
             $table->boolean('status')->default(1);
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('LST_Sor');
+        Schema::dropIfExists('Lst_Es');
     }
 };

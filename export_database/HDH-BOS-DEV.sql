@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 15, 2024 at 01:53 AM
+-- Generation Time: May 17, 2024 at 02:05 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -130,6 +130,29 @@ INSERT INTO `LST_Block` (`id`, `name`, `note`, `status`, `created_at`, `updated_
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `LST_Es`
+--
+
+CREATE TABLE `LST_Es` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL COMMENT 'Tên trạng thái',
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `LST_Es`
+--
+
+INSERT INTO `LST_Es` (`id`, `name`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Đang làm việc', 1, '2024-05-16 08:30:47', '2024-05-16 08:30:47'),
+(2, 'Đã nghỉ việc', 1, '2024-05-16 08:30:47', '2024-05-16 08:30:47'),
+(3, 'Dự kiến tuyển dụng', 1, '2024-05-16 08:30:47', '2024-05-16 08:30:47');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `LST_Field`
 --
 
@@ -160,10 +183,69 @@ INSERT INTO `LST_Field` (`id`, `name`, `note`, `status`, `created_at`, `updated_
 
 CREATE TABLE `LST_Gender` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL COMMENT 'Tên giới tính',
+  `status` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `LST_Gender`
+--
+
+INSERT INTO `LST_Gender` (`id`, `name`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Nam', 1, '2024-05-16 08:31:10', '2024-05-16 08:31:10'),
+(2, 'Nữ', 1, '2024-05-16 08:31:10', '2024-05-16 08:31:10'),
+(3, 'Khác', 1, '2024-05-16 08:31:10', '2024-05-16 08:31:10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `LST_Sor`
+--
+
+CREATE TABLE `LST_Sor` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL COMMENT 'Tên nguồn hồ sơ',
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `LST_Sor`
+--
+
+INSERT INTO `LST_Sor` (`id`, `name`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'BOS', 1, '2024-05-16 08:31:23', '2024-05-16 08:31:23'),
+(2, 'Sổ bán hàng kế toán', 1, '2024-05-16 08:31:23', '2024-05-16 08:31:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `LST_Work_Regime`
+--
+
+CREATE TABLE `LST_Work_Regime` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL COMMENT 'Tên chế độ làm việc',
+  `note` text DEFAULT NULL COMMENT 'Ghi chú chế độ làm việc',
+  `nwd` decimal(8,2) DEFAULT NULL COMMENT 'Số ngày làm việc',
+  `ndo` decimal(8,2) DEFAULT NULL COMMENT 'Số ngày nghỉ',
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `LST_Work_Regime`
+--
+
+INSERT INTO `LST_Work_Regime` (`id`, `name`, `note`, `nwd`, `ndo`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'Làm đến hết thứ 6', NULL, NULL, NULL, 1, '2024-05-16 08:46:49', '2024-05-16 08:46:49'),
+(2, 'Làm đến hết thứ T6 + nửa ngày T7', NULL, NULL, NULL, 1, '2024-05-16 08:46:49', '2024-05-16 08:46:49'),
+(3, 'Làm đến hết thứ T6 + thứ 7 cách tuần', NULL, NULL, NULL, 1, '2024-05-16 08:46:49', '2024-05-16 08:46:49'),
+(4, 'Làm đến hết ngày thứ 7', NULL, NULL, NULL, 1, '2024-05-16 08:46:49', '2024-05-16 08:46:49');
 
 -- --------------------------------------------------------
 
@@ -186,7 +268,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2024_04_21_162254_create_slicer_setting_table', 5),
 (13, '2024_04_21_161909_create_slicer_table', 6),
 (14, '2024_05_14_133449_create_staffs_table', 7),
-(15, '2024_05_14_152752_create_lst_gender_table', 8);
+(18, '2024_05_14_152752_create_lst_gender_table', 8),
+(19, '2024_05_14_153311_create_sor_table', 9),
+(20, '2024_05_16_142537_create_lst_work_regime_table', 10),
+(21, '2024_05_16_144238_create_lst_es_table', 11);
 
 -- --------------------------------------------------------
 
@@ -293,6 +378,20 @@ INSERT INTO `slicer_setting` (`id`, `slicer_id`, `title`, `caption`, `count`, `i
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `sor`
+--
+
+CREATE TABLE `sor` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `staffs`
 --
 
@@ -350,6 +449,12 @@ ALTER TABLE `LST_Block`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `LST_Es`
+--
+ALTER TABLE `LST_Es`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `LST_Field`
 --
 ALTER TABLE `LST_Field`
@@ -359,6 +464,18 @@ ALTER TABLE `LST_Field`
 -- Indexes for table `LST_Gender`
 --
 ALTER TABLE `LST_Gender`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `LST_Sor`
+--
+ALTER TABLE `LST_Sor`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `LST_Work_Regime`
+--
+ALTER TABLE `LST_Work_Regime`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -383,6 +500,12 @@ ALTER TABLE `slicer`
 -- Indexes for table `slicer_setting`
 --
 ALTER TABLE `slicer_setting`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `sor`
+--
+ALTER TABLE `sor`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -414,6 +537,12 @@ ALTER TABLE `LST_Block`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `LST_Es`
+--
+ALTER TABLE `LST_Es`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `LST_Field`
 --
 ALTER TABLE `LST_Field`
@@ -423,13 +552,25 @@ ALTER TABLE `LST_Field`
 -- AUTO_INCREMENT for table `LST_Gender`
 --
 ALTER TABLE `LST_Gender`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `LST_Sor`
+--
+ALTER TABLE `LST_Sor`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `LST_Work_Regime`
+--
+ALTER TABLE `LST_Work_Regime`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `postions`
@@ -448,6 +589,12 @@ ALTER TABLE `slicer`
 --
 ALTER TABLE `slicer_setting`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `sor`
+--
+ALTER TABLE `sor`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `staffs`
