@@ -10,7 +10,6 @@ use App\Http\Controllers\FieldController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\PostionController;
 use App\Http\Controllers\SliderController;
-use App\Models\Department;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('restore-department', [DepartmentController::class, 'restoreTranshDepartment']);
         Route::get('search-department/{keySearch}', [DepartmentController::class, 'searchDepartment']);
         Route::post('search-slicer-unit', [DepartmentController::class, 'getSearchSlicerUnit']);
+        Route::get('org-chart', [DepartmentController::class, 'getOrgChart']);
 
         Route::post('postions/{page}', [PostionController::class, 'index']);
         Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);

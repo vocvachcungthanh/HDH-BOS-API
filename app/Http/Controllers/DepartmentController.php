@@ -411,6 +411,226 @@ class DepartmentController extends Controller
         ], 200);
     }
 
+    public function getOrgChart()
+    {
+        $orgChartTree = [
+            [
+                'id' => date('Y-m-d H:i:s'),
+                'name' => 'Ban giám đốc',
+                'link' => '#',
+                'total' => 3,
+                'block' => [
+                    [
+                        'id' => date('Y-m-d H:i:s'),
+                        'name' => 'Tổng giám đốc',
+                        'link' => '#',
+                        'total' => 1,
+                        'staff' => [
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Vũ đức tuấn',
+                                'link' => '#',
+                                'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-3.png',
+                            ],
+
+                        ],
+                    ],
+                    [
+                        'id' => date('Y-m-d H:i:s'),
+                        'name' => 'Phó TGD phụ trách R&D',
+                        'link' => '#',
+                        'total' => 1,
+                        'staff' => [
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Hà thúy quỳnh',
+                                'link' => '#',
+                                'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-1.png',
+                            ],
+                        ],
+                    ],
+                    [
+                        'id' => date('Y-m-d H:i:s'),
+                        'name' => 'Chủ tịch HĐQT',
+                        'link' => '#',
+                        'total' => 1,
+                        'staff' => [
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Nguyễn xuân tuấn',
+                                'link' => '#',
+                                'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-2.png',
+                            ],
+                        ],
+                    ],
+                ],
+
+                'children' => [
+                    [
+                        'id' => date('Y-m-d H:i:s'),
+                        'name' => 'Ban giám đốc',
+                        'link' => '#',
+                        'total' => 3,
+                        'block' => [
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Tổng giám đốc',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Vũ đức tuấn',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-3.png',
+                                    ],
+
+                                ],
+                            ],
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Phó TGD phụ trách R&D',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Hà thúy quỳnh',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-1.png',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Chủ tịch HĐQT',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Nguyễn xuân tuấn',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-2.png',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'id' => date('Y-m-d H:i:s'),
+                        'name' => 'Ban giám đốc',
+                        'link' => '#',
+                        'total' => 3,
+                        'block' => [
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Tổng giám đốc',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Vũ đức tuấn',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-3.png',
+                                    ],
+
+                                ],
+                            ],
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Phó TGD phụ trách R&D',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Hà thúy quỳnh',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-1.png',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Chủ tịch HĐQT',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Nguyễn xuân tuấn',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-2.png',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'id' => date('Y-m-d H:i:s'),
+                        'name' => 'Ban giám đốc',
+                        'link' => '#',
+                        'total' => 3,
+                        'block' => [
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Tổng giám đốc',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Vũ đức tuấn',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-3.png',
+                                    ],
+
+                                ],
+                            ],
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Phó TGD phụ trách R&D',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Hà thúy quỳnh',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-1.png',
+                                    ],
+                                ],
+                            ],
+                            [
+                                'id' => date('Y-m-d H:i:s'),
+                                'name' => 'Chủ tịch HĐQT',
+                                'link' => '#',
+                                'total' => 1,
+                                'staff' => [
+                                    [
+                                        'id' => date('Y-m-d H:i:s'),
+                                        'name' => 'Nguyễn xuân tuấn',
+                                        'link' => '#',
+                                        'img' => 'https://bos.edu.vn/wp-content/uploads/2023/06/gv-2.png',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ]
+
+                ]
+            ],
+        ];
+
+
+        return response()->json([
+            'code' => 200,
+            'data' => $orgChartTree
+        ], 200);
+    }
+
     private function confirmationBeforeDeletionDepartment($id)
     {
         // Kiểm trả dữ liệu truyền lên hợp lệ không
