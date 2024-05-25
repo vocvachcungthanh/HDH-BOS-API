@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 15, 2024 at 01:53 AM
+-- Generation Time: May 21, 2024 at 01:57 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -143,7 +143,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `user_name`, `remember_token`, `last_session`, `staff_id`, `company_id`, `login_at`, `email_verified_at`, `change_password_at`, `created_at`, `updated_at`) VALUES
-(1, 'bosdev', 'vocvachcungthanh@gmail.com', '$2y$12$SMwIlTuf/bhT5HRNnHj6WuzVBduiNnBqUg/HxB.mjs2ZgIVzbl3g6', 'bosdev', '8hhYF1uM50QYlNI8ALKPYyxriQ2cbdckXYDdsxDeNCUE1TDsIawiMlfI3l2O', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaGRoLWJvcy1kZXYueHl6L2hkaC1ib3MtYXBpL3B1YmxpYy9hcGkvYXV0aC9yZWZyZXNoIiwiaWF0IjoxNzE1NjkyNTczLCJleHAiOjE3MTU2OTYxNzMsIm5iZiI6MTcxNTY5MjU3MywianRpIjoiem5sd3hLM2o1R25YWkdJMCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.h-D-VktJjl2IdOPYKb88YN0Era_FJJBUxnsl6Dx4Iao', 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-05-14 06:16:13'),
+(1, 'bosdev', 'vocvachcungthanh@gmail.com', '$2y$12$SMwIlTuf/bhT5HRNnHj6WuzVBduiNnBqUg/HxB.mjs2ZgIVzbl3g6', 'bosdev', '8hhYF1uM50QYlNI8ALKPYyxriQ2cbdckXYDdsxDeNCUE1TDsIawiMlfI3l2O', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vaGRoLWJvcy1kZXYueHl6L2hkaC1ib3MtYXBpL3B1YmxpYy9hcGkvYXV0aC9yZWZyZXNoIiwiaWF0IjoxNzE2MjE4NjU2LCJleHAiOjE3MTYyMjIyNTYsIm5iZiI6MTcxNjIxODY1NiwianRpIjoiQm9RM2RVZW8yVTF6bXZKeiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.wpYlhb71XQn4tHkWOwr5f7SPufS3oNyC5VJcAIxkk-A', 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-05-20 08:24:16'),
 (2, 'admin2', 'vocvachcungthanh2@gmail.com', '$2y$12$HA3rCNUAAoGY5v7fkW1T/e/RukOupzo7vwm8VTOQy4OAsQJrmu1Nm', 'admin2', 'Rwl9psFOO0KG52XyXwRBZvQai0tzm3dYwH1R008d5JmNUJtMtMdYDLc7WIcJ', NULL, 1, 1, NULL, NULL, NULL, '2024-03-12 09:40:44', '2024-03-12 09:40:44');
 
 --
