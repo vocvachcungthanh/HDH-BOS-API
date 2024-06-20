@@ -18,6 +18,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+
         $validator = Validator::make($request->all(), $this->rules(), $this->messages(), $this->attributes());
 
         if ($validator->fails()) {
@@ -40,9 +41,11 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $remember = $request->get('remember');
+
         return response()->json([
             'code'      => 200,
-            'data'      => $this->responseWithToken($checkLogin),
+            'data'      => $this->responseWithToken($checkLogin, $remember),
             'messages'  => 'Đăng nhập thành công'
         ], 200);
         // }
@@ -75,12 +78,12 @@ class AuthController extends Controller
     {
         $refreshToken = $request->refresh_token;
 
-
-
         try {
             $decoded = JWTAuth::getJWTProvider()->decode($refreshToken);
 
-            if (!$decoded['id']) {
+
+
+            if (!$decoded['id'] && isset($decoded['exp']) && time() > $decoded['exp']) {
 
                 return response()->json([
                     'code' => 404,
@@ -101,10 +104,20 @@ class AuthController extends Controller
                 }
             }
 
+            if (isset($decoded['exp']) && time() > $decoded['exp']) {
+                return response()->json([
+                    'code' => 401,
+                    'errors' => [
+                        'message' => 'Refresh token đã hết hạn'
+                    ]
+                ], 401);
+            }
+
             $token = Auth::login($user);
+
             return response()->json([
                 'code'      => 200,
-                'data'      => $this->responseWithToken($token),
+                'data'      => $this->responseWithToken($token, true),
                 'messages'  => 'refresh token thành công'
             ], 200);
         } catch (JWTException $exception) {
@@ -117,28 +130,34 @@ class AuthController extends Controller
         }
     }
 
-    private function responseWithToken($accessToken)
+    private function responseWithToken($accessToken, $remember)
     {
         if (Auth::user()->id) {
             User::where('id', Auth::user()->id)->update(['last_session' => $accessToken]);
         };
 
+
+        $ttl = $remember ? config('jwt.remember_ttl') : config('jwt.ttl');
+        $refreshTtl = $remember ? config('jwt.refresh_remember_ttl') : config('jwt.refresh_ttl');
+
+
+        JWTAuth::factory()->setTTL($ttl);
         return [
             'id'            => Auth::user()->id,
             'company_id'    => Auth::user()->company_id,
             'access_token'  => $accessToken,
             'token_type'    => 'bearer',
-            'expires_in'    => Auth::factory()->getTTL(),
-            'refresh_token' => $this->createRefreshToken()
+            'expires_in'    => $ttl, // Convert to seconds
+            'refresh_token' => $this->createRefreshToken(time() + $refreshTtl)
         ];
     }
 
-    private function createRefreshToken()
+    private function createRefreshToken($expiresInRefreshToken)
     {
         return JWTAuth::getJWTProvider()->encode([
             'id'       => Auth::user()->id,
             'random'    => rand() . time(),
-            'exp'       => time() + config('jwt.refresh_ttl')
+            'exp'       => $expiresInRefreshToken
         ]);
     }
 
