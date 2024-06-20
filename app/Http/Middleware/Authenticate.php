@@ -52,11 +52,11 @@ class Authenticate extends Middleware
             ], 401);
         } catch (TokenExpiredException $exception) {
             return response()->json([
-                'code' => 402,
+                'code' => 410,
                 'errors' => [
                     'message' => "Token hết hạn",
                 ],
-            ], 402);
+            ], 410);
         } catch (JWTException $exception) {
             return response()->json([
                 'code' => 401,
