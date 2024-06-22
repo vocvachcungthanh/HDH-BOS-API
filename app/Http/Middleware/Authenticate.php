@@ -10,6 +10,7 @@ use App\Models\User;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Authenticate extends Middleware
 {
@@ -45,25 +46,16 @@ class Authenticate extends Middleware
             }
         } catch (TokenInvalidException $exception) {
             return response()->json([
-                'code' => 401,
-                'errors' => [
-                    'message' => $exception->getMessage(),
-                ],
-            ], 401);
+                'message' => $exception->getMessage(),
+            ], Response::HTTP_UNAUTHORIZED);
         } catch (TokenExpiredException $exception) {
             return response()->json([
-                'code' => 410,
-                'errors' => [
-                    'message' => "Token hết hạn",
-                ],
-            ], 410);
+                'message' => "Token hết hạn",
+            ], Response::HTTP_GONE);
         } catch (JWTException $exception) {
             return response()->json([
-                'code' => 401,
-                'errors' => [
-                    'message' => $exception->getMessage(),
-                ],
-            ], 401);
+                'message' => $exception->getMessage(),
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         // Tiếp tục xử lý nếu token hợp lệ và không hết hạn

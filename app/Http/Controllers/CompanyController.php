@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+// use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Crypt;
+use Symfony\Component\HttpFoundation\Response;
 
 class CompanyController extends Controller
 {
@@ -46,7 +48,6 @@ class CompanyController extends Controller
             $company->db_h = Crypt::encryptString($hosting);
 
             return response()->json([
-                'code' => 200,
                 'data' => [
                     'id'            => $company->id,
                     'name'          => $company->name,
@@ -60,14 +61,12 @@ class CompanyController extends Controller
                     'created_at'    => $company->created_at,
                     'updated_at'    => $company->updated_at,
                 ]
-            ], 200);
+            ], Response::HTTP_OK);
         } else {
             return response()->json([
-                'code'   => 401,
-                'errors' => [
-                    'message' => "Công ty không tồn tại",
-                ]
-            ], 401);
+                'message' => "Công ty không tồn tại",
+
+            ], Response::HTTP_NOT_FOUND);
         }
     }
 

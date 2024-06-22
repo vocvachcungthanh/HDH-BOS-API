@@ -101,8 +101,8 @@ return [
     |
     */
 
-    'ttl' => convertToMinutes(env('JWT_TTL')), // mặc định 60 phút
-    'remember_ttl' => convertToMinutes(env('JWT_REMEMBER_TTL')), // mặc định 2 tuần
+    'ttl' => env('JWT_TTL', 60),
+    'remember_ttl' => env('JWT_REMEMBER_TTL', 20160),
 
     /*
     |--------------------------------------------------------------------------
@@ -121,8 +121,8 @@ return [
     |
     */
 
-    'refresh_ttl' => convertToMinutes(env('JWT_REFRESH_TTL')), // mặc định 1 ngày
-    'refresh_remember_ttl' => convertToMinutes(env('JWT_REFRESH_REMEMBER_TTL')),
+    'refresh_ttl' => env('JWT_REFRESH_TTL', 60),
+    'refresh_remember_ttl' => env('JWT_REFRESH_REMEMBER_TTL', 40320),
     /*
     |--------------------------------------------------------------------------
     | JWT hashing algorithm
