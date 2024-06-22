@@ -6,8 +6,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -16,6 +19,11 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
     }
 
+    /**
+     * Auth: NguyenHuuThanh
+     * Date: 21/06/2024
+     * @login xử lý phần đăng nhập
+     */
     public function login(Request $request)
     {
 
@@ -23,9 +31,8 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'code' => 400,
                 'errors' => $validator->messages()->all()
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $credentials = $request->only('user_name', 'password');
@@ -34,23 +41,24 @@ class AuthController extends Controller
 
         if (!$checkLogin) {
             return response()->json([
-                'code' => 401,
-                'errors' => [
-                    'message' => 'Tài khoản hoặc mật khẩu không đúng'
-                ]
-            ], 401);
+                'message' => "Tài khoản hoặc mật khẩu không đúng"
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         $remember = $request->get('remember');
 
         return response()->json([
-            'code'      => 200,
             'data'      => $this->responseWithToken($checkLogin, $remember),
-            'messages'  => 'Đăng nhập thành công'
-        ], 200);
+            'message'  => 'Đăng nhập thành công'
+        ], Response::HTTP_OK);
         // }
     }
 
+    /**
+     * Auth: NguyenHuuThanh
+     * Date: 21/06/2024
+     *@logout xử lý đăng xuất
+     */
     public function logout()
     {
         try {
@@ -58,109 +66,125 @@ class AuthController extends Controller
             User::where('id', Auth::user()->id)->update([
                 'last_session' => ''
             ]);
+
             Auth::logout();
 
             return response()->json([
-                'code' => 200,
                 'message' => 'Đăng xuất thành công'
-            ]);
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             // Xử lý lỗi nếu có
             return response()->json([
-                'code' => 500,
                 'error' => $e,
                 'message' => 'Đã xảy ra lỗi khi đăng xuất'
-            ], 500);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * Auth: NguyenHuuThanh
+     * Date: 21/06/2024
+     * @refresh Xử lý refresh cập lại token khi token access hết hạn
+     */
     public function refresh(Request $request)
     {
         $refreshToken = $request->refresh_token;
+        $remember = $request->remember;
 
         try {
+            // Giải mã token và bắt lỗi nếu token không hợp lệ hoặc hết hạn
             $decoded = JWTAuth::getJWTProvider()->decode($refreshToken);
-
-
-
-            if (!$decoded['id'] && isset($decoded['exp']) && time() > $decoded['exp']) {
-
+            $user = User::find($decoded['id']);
+            // Kiểm tra sự tồn tại của 'id' trong payload
+            if (!isset($decoded['id']) || !$user) {
                 return response()->json([
-                    'code' => 404,
-                    'errors' => [
-                        'message' => "Tài khoản không tồn tại"
-                    ]
-                ], 404);
-            } else {
-                $user = User::find($decoded['id']);
-
-                if (!$user) {
-                    return response()->json([
-                        'code' => 401,
-                        'errors' => [
-                            'message' => "Tài khoản không tồn tại"
-                        ]
-                    ], 401);
-                }
+                    'message' => "Phiêm làm việc này đã hết thời gian ! vui lòng đăng nhập lại"
+                ], Response::HTTP_UNAUTHORIZED);
             }
 
-            if (isset($decoded['exp']) && time() > $decoded['exp']) {
+            // Kiểm tra thời hạn của token
+            if ($decoded['exp'] < time()) {
                 return response()->json([
-                    'code' => 401,
-                    'errors' => [
-                        'message' => 'Refresh token đã hết hạn'
-                    ]
-                ], 401);
+                    'message' => "Phiên làm việc này đã hết thời gian! Vui lòng đăng nhập lại."
+                ], Response::HTTP_UNAUTHORIZED);
             }
 
+            // Đăng nhập và tạo token mới
             $token = Auth::login($user);
+            return response()->json([
+                'data'      => $this->responseWithToken($token, $remember),
+                'message'  => 'Refresh token thành công',
 
+            ], Response::HTTP_OK);
+        } catch (\Exception $exception) {
             return response()->json([
-                'code'      => 200,
-                'data'      => $this->responseWithToken($token, true),
-                'messages'  => 'refresh token thành công'
-            ], 200);
-        } catch (JWTException $exception) {
-            return response()->json([
-                "code" => 401,
-                'errors' => [
-                    'message' => 'refresh token không tồn tại'
-                ]
-            ], [401]);
+                "error" =>  $exception,
+                'message' => 'Phiêm làm việc này đã hết thời gian ! vui lòng đăng nhập lại'
+            ], Response::HTTP_UNAUTHORIZED);
         }
     }
 
+    /**
+     * Auth: NguyenHuuThanh
+     * Date: 21/06/2024
+     * @responseWithToken xử lý tạo accessToken
+     */
     private function responseWithToken($accessToken, $remember)
     {
-        if (Auth::user()->id) {
-            User::where('id', Auth::user()->id)->update(['last_session' => $accessToken]);
-        };
+        $user = Auth::user();
 
+        if ($user) {
+            DB::beginTransaction();
+
+            try {
+                User::where('id', $user->id)->update(['last_session' => $accessToken]);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                // Xử lý lỗi nếu có
+                // Ví dụ: Log::error($e->getMessage());
+            }
+        }
 
         $ttl = $remember ? config('jwt.remember_ttl') : config('jwt.ttl');
         $refreshTtl = $remember ? config('jwt.refresh_remember_ttl') : config('jwt.refresh_ttl');
 
-
         JWTAuth::factory()->setTTL($ttl);
+
         return [
-            'id'            => Auth::user()->id,
-            'company_id'    => Auth::user()->company_id,
+            'id'            => $user->id,
+            'company_id'    => $user->company_id,
             'access_token'  => $accessToken,
             'token_type'    => 'bearer',
-            'expires_in'    => $ttl, // Convert to seconds
-            'refresh_token' => $this->createRefreshToken(time() + $refreshTtl)
+            'expires_in'    => $ttl * 60, // Convert to seconds
+            'refresh_token' => $this->createRefreshToken($refreshTtl),
+            'remember'      => $remember
         ];
     }
 
+    /**
+     * Auth: NguyenHuuThanh
+     * Date: 21/06/2024
+     * @createRefreshToken Xử lý tạo refreshToken
+     */
     private function createRefreshToken($expiresInRefreshToken)
     {
+        $randomString = Str::random(40);
+
         return JWTAuth::getJWTProvider()->encode([
-            'id'       => Auth::user()->id,
-            'random'    => rand() . time(),
-            'exp'       => $expiresInRefreshToken
+            'id'   => Auth::user()->id,
+            'rand' => $randomString,
+            'exp'  => time() + $expiresInRefreshToken * 60
         ]);
     }
 
+
+    /**
+     * Auth: NguyenHuuThanh
+     * Date: 21/06/2024
+     * @rules, @messages, @attributes 
+     * Xử lý thông báo Validator
+     */
     private function rules()
     {
         return [
