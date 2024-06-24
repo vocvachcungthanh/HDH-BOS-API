@@ -13,6 +13,7 @@ class Department extends Model
     protected $primaryKey = "id";
     protected $table = 'departments';
 
+
     public static function generateCode()
     {
         $latestCode = static::latest()->value('code');

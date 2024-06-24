@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
-use App\Models\Postion;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
 
 
-class PostionController extends Controller
+class PositionController extends Controller
 {
     public function index(Request $request, $page)
     {
@@ -26,7 +26,7 @@ class PostionController extends Controller
 
         $per_page = $request->pageSize;
 
-        $postions = DB::table('postions as PB')
+        $position = DB::table('position as PB')
             ->leftJoin('LST_Account_Type as AT', 'PB.account_type_id', '=', 'AT.id')
             ->leftJoin('departments as D', 'PB.department_id', '=', 'D.id')
             ->selectRaw('
@@ -44,17 +44,17 @@ class PostionController extends Controller
 
             ->paginate($per_page, ['*'], 'page', $page);
 
-        $this->createStt($postions->items());
+        $this->createStt($position->items());
 
         return response()->json([
             'code'  => 200,
-            'data'  => $postions
+            'data'  => $position
         ]);
     }
 
     public function createAutoCode()
     {
-        $code = Postion::generateCode();
+        $code = Position::generateCode();
 
         if ($code) {
             return response()->json([
@@ -82,7 +82,7 @@ class PostionController extends Controller
             ], 400);
         }
 
-        $create = Postion::create([
+        $create = Position::create([
             'name'              => $request->name,
             'code'              => $request->code,
             'account_type_id'   => $request->account_type_id,
@@ -98,7 +98,7 @@ class PostionController extends Controller
                 'code' => 200,
                 'data' =>  [
                     'departemnt' => $create,
-                    'code_next' => Postion::generateCode()
+                    'code_next' => Position::generateCode()
                 ],
                 'message' => "Thêm vị trí thành công"
 
@@ -130,7 +130,7 @@ class PostionController extends Controller
         }
 
         //  Khi làm phân nhân viên cần check thêm cây xem vị trí đó có nhân viên không 
-        $deleteAll = Postion::whereIn('id', $idsToDelete)->delete();
+        $deleteAll = Position::whereIn('id', $idsToDelete)->delete();
 
         if ($deleteAll > 0) {
             return response()->json([
@@ -155,7 +155,7 @@ class PostionController extends Controller
         }
     }
 
-    public function getSearchSlicerPostion(Request $request, $page)
+    public function getSearchSlicerPosition(Request $request, $page)
     {
         // Validate the request
         $validator = Validator::make($request->all(), $this->rulesPage(), $this->messagesPage(), $this->attributesPage());
@@ -171,7 +171,7 @@ class PostionController extends Controller
         $per_page = $request->input('pageSize', 10);
 
         // Prepare the query
-        $query = DB::table('postions as PB')
+        $query = DB::table('position as PB')
             ->leftJoin('LST_Account_Type as AT', 'PB.account_type_id', '=', 'AT.id')
             ->leftJoin('departments as D', 'PB.department_id', '=', 'D.id')
             ->selectRaw('
@@ -208,7 +208,7 @@ class PostionController extends Controller
         ], 200);
     }
 
-    public function searchPostion(Request $request, string $keySearch, $page)
+    public function searchPosition(Request $request, string $keySearch, $page)
     {
         if (!isEmpty($keySearch)) {
             return response()->json([
@@ -229,7 +229,7 @@ class PostionController extends Controller
             }
 
             $per_page = $request->pageSize;
-            $search = DB::table('postions as P')
+            $search = DB::table('position as P')
                 ->leftJoin('LST_Account_Type as AT', 'P.account_type_id', '=', 'AT.id')
                 ->leftJoin('departments as D', 'P.department_id', '=', 'D.id')
                 ->selectRaw('

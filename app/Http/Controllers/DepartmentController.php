@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Models\Department;
-use App\Models\Postion;
+use App\Models\Position;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -658,7 +658,7 @@ class DepartmentController extends Controller
 
         // kiểm tra xme phòng ban có ví trí chưa
 
-        if (Postion::where([
+        if (Position::where([
             'department_id' => $id,
             'status'    => 1,
         ])->count() > 0) {

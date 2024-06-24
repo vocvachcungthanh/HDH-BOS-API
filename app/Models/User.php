@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
     protected $primaryKey = "id";
 
     protected $table = "users";
+    protected $fillable = ['last_session'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,5 +54,27 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * Auth Nguyen_Huu_Thanh
+     * Date By: 24/06/2024
+     * Description: hàm updateLastSession dùng để cập nhập lại last_section 
+     */
+
+    public static function updateLastSession($userId, $accessToken)
+    {
+        return self::where('id', $userId)->update(['last_session' => $accessToken]);
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 24/06/2024
+     * Description: Hàm 
+     */
+
+    public static function getEmailUser($email)
+    {
+        return DB::connection('mysqlQL')->table('users')->where('email', $email)->first();
     }
 }

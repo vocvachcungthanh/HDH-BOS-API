@@ -8,8 +8,9 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\AccountTypeController;
-use App\Http\Controllers\PostionController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\SliderController;
+use PharIo\Manifest\Author;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,7 @@ Route::group([
     Route::post('login', [AuthController::class, 'login']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::delete('logout', [AuthController::class, 'logout']);
+    Route::post('email-forgot-password', [AuthController::class, 'sendOtpEmailForgotPassword']);
 });
 
 
@@ -62,12 +64,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('search-slicer-unit', [DepartmentController::class, 'getSearchSlicerUnit']);
         Route::get('org-chart', [DepartmentController::class, 'getOrgChart']);
 
-        Route::post('postions/{page}', [PostionController::class, 'index']);
-        Route::get('create-code-postion', [PostionController::class, 'createAutoCode']);
-        Route::post('create-postion', [PostionController::class, 'create']);
-        Route::post('delete-postion', [PostionController::class, 'deleteAll']);
-        Route::post('search-slicer-postion/{page}', [PostionController::class, 'getSearchSlicerPostion']);
-        Route::post('search-postion/{keySearch}/{page}', [PostionController::class, 'searchPostion']);
+        Route::post('positions/{page}', [PositionController::class, 'index']);
+        Route::get('create-code-position', [PositionController::class, 'createAutoCode']);
+        Route::post('create-position', [PositionController::class, 'create']);
+        Route::post('delete-position', [PositionController::class, 'deleteAll']);
+        Route::post('search-slicer-position/{page}', [PositionController::class, 'getSearchSlicerPosition']);
+        Route::post('search-position/{keySearch}/{page}', [PositionController::class, 'searchPosition']);
 
         Route::get('account-type', [AccountTypeController::class, 'index']);
 

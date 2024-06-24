@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Otp;
+use Illuminate\Support\Facades\DB;
+
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
@@ -16,7 +19,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'sendOtpEmailForgotPassword']]);
     }
 
     /**
@@ -62,11 +65,9 @@ class AuthController extends Controller
     public function logout()
     {
         try {
-
-            User::where('id', Auth::user()->id)->update([
-                'last_session' => ''
-            ]);
-
+            $userId = Auth::user()->id;
+            $accessToken = "";
+            User::updateLastSession($userId, $accessToken);
             Auth::logout();
 
             return response()->json([
@@ -84,7 +85,7 @@ class AuthController extends Controller
     /**
      * Auth: NguyenHuuThanh
      * Date: 21/06/2024
-     * @refresh Xử lý refresh cập lại token khi token access hết hạn
+     * Description: @refresh Xử lý refresh cập lại token khi token access hết hạn
      */
     public function refresh(Request $request)
     {
@@ -121,6 +122,48 @@ class AuthController extends Controller
                 "error" =>  $exception,
                 'message' => 'Phiêm làm việc này đã hết thời gian ! vui lòng đăng nhập lại'
             ], Response::HTTP_UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date 24/06/2024
+     * Description: Hàm gửi mã opt đến email để xác thực mã opt
+     */
+    public function sendOtpEmailForgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        $email = $request->email;
+
+        $checkEmail = User::getEmailUser($email);
+
+        if ($checkEmail) {
+
+            $optCode = rand(100000, 999999);
+
+            $otp = Otp::createOtp(
+                [
+                    'user_id'       => $checkEmail->id,
+                    'opt_code'      => $optCode,
+                    'expired_at'    => Carbon::now()->addMinutes(10),
+                ]
+            );
+
+            // Gửi mã OTP qua email (hoặc SMS nếu bạn sử dụng dịch vụ SMS)
+
+            Mail::raw("Your OTP code is $optCode", function ($message) use ($checkEmail) {
+                $message->to($checkEmail->email)->subject("OTP for Password Reset");
+            });
+
+            return response()->json([
+                'data' => $otp,
+                'message' => "Otp đã được gửi thanh công"
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'error' => $checkEmail,
+                'message' => "Email không tồn tại"
+            ], Response::HTTP_NOT_FOUND);
         }
     }
 
