@@ -34,6 +34,7 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::delete('logout', [AuthController::class, 'logout']);
     Route::post('email-forgot-password', [AuthController::class, 'sendOtpEmailForgotPassword']);
+    Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 });
 
 

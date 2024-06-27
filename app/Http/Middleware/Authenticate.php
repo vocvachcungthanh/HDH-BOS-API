@@ -21,12 +21,17 @@ class Authenticate extends Middleware
         $headers = apache_request_headers();
 
         $requestToken = trim(str_replace('Bearer', '', $request->header('Authorization')));
-        $idUser = $headers['id_user'];
 
-        if (!empty($idUser)) {
-            $lastSession = User::where('id', $headers['id_user'])->value('last_session');
+        // Kiểm tra sự tồn tại của khóa 'id_user' trong headers
+        if (isset($headers['id_user']) && !empty($headers['id_user'])) {
+            $idUser = $headers['id_user'];
+            $lastSession = User::where('id', $idUser)->value('last_session');
+        } else {
+            return response()->json([
+                'error' => 'id_user không tồn tại trong headers',
+                'message' => "Bạn không có quyên truy cập tính năng này"
+            ], Response::HTTP_NOT_FOUND);
         }
-
 
         try {
             // Xác thực token

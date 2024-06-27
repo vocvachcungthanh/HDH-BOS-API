@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Auth: Nguyen_Huu_Thanh
+ * Date By: 25-06-2024
+ * Description: Xử lý liên quan tới auth
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -14,12 +20,17 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class AuthController extends Controller
 {
+    private $secretKey;
+
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'sendOtpEmailForgotPassword']]);
+        $this->secretKey = config('jwt.secret');
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'sendOtpEmailForgotPassword', 'verifyOtp']]);
     }
 
     /**
@@ -128,7 +139,7 @@ class AuthController extends Controller
     /**
      * Auth: Nguyen_Huu_Thanh
      * Date 24/06/2024
-     * Description: Hàm gửi mã opt đến email để xác thực mã opt
+     * Description: Hàm tạo mã top gửi đến email để xác thực
      */
     public function sendOtpEmailForgotPassword(Request $request)
     {
@@ -139,30 +150,82 @@ class AuthController extends Controller
 
         if ($checkEmail) {
 
-            $optCode = rand(100000, 999999);
+            $otpCode = rand(100000, 999999);
+
 
             $otp = Otp::createOtp(
                 [
                     'user_id'       => $checkEmail->id,
-                    'opt_code'      => $optCode,
-                    'expired_at'    => Carbon::now()->addMinutes(10),
+                    'otp_code'      => $otpCode,
+                    'expired_at'    => Carbon::now()->addSeconds(30), // Mã OPT hết hạn sau 1 phút
                 ]
             );
 
             // Gửi mã OTP qua email (hoặc SMS nếu bạn sử dụng dịch vụ SMS)
 
-            Mail::raw("Your OTP code is $optCode", function ($message) use ($checkEmail) {
-                $message->to($checkEmail->email)->subject("OTP for Password Reset");
+            Mail::raw("Mã OTP của bạn là: $otpCode", function ($message) use ($checkEmail) {
+                $message->to($checkEmail->email)->subject("OTP để đặt lại mật khẩu");
             });
 
+            // Tạo mã bí mật để bảo vệ email
+
             return response()->json([
-                'data' => $otp,
+                'data' => $this->createToken($otp->user_id, $otp),
                 'message' => "Otp đã được gửi thanh công"
             ], Response::HTTP_OK);
         } else {
             return response()->json([
                 'error' => $checkEmail,
                 'message' => "Email không tồn tại"
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 25-06-2024
+     * Description: Kiểm tra otp gửi lên có chính xác hay không
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp_code' => 'required',
+            'email_token' => 'required'
+        ], [
+            'otp_code.required' => "Mã otp không được bỏ trống",
+            'email_token' => 'Không tồn tại mã xác thực',
+        ]);
+
+        try {
+            // Giả mã token xem có hợp lệ trong JWT không
+            JWT::decode($request->email_token, new Key($this->secretKey, 'HS256'));
+
+            // Kiểm tra OTP có tồn tại trong csdl không
+            $otp = Otp::getOtp($request->otp_code);
+
+            if (!$otp) {
+                return response()->json([
+                    "error" => $otp,
+                    'message' => "Mã otp không đúng hoặc hết hạn"
+                ], Response::HTTP_BAD_REQUEST);
+            } else {
+                $deleteOtp = Otp::deleteOtp($otp->id);
+
+                if ($deleteOtp) {
+                    return response()->json([
+                        "data" => $otp->user_id,
+                        'message' => "OTP chính xác"
+                    ], Response::HTTP_OK);
+                } else {
+                    return response()->json([
+                        'message' => "Lỗi không xác thực được OTP"
+                    ], Response::HTTP_OK);
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e,
+                "message" => "Thời gian xác thực otp hết hạn "
             ], Response::HTTP_NOT_FOUND);
         }
     }
@@ -219,6 +282,23 @@ class AuthController extends Controller
             'rand' => $randomString,
             'exp'  => time() + $expiresInRefreshToken * 60
         ]);
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 27-06-2024
+     * Description: Hàm tao token
+     */
+
+    private function createToken($id, $value)
+    {
+        $payload = [
+            'user_id' => $id,          // Subject: ID của người dùng
+            'otp' => $value,
+            'exp' => time() + 30,  // Thời gian hết hạn: 30s
+        ];
+
+        return JWT::encode($payload, $this->secretKey, 'HS256');
     }
 
 
