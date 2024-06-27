@@ -17,10 +17,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('opts', function (Blueprint $table) {
+        Schema::create('otp', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string("opt_code");
+            $table->string("otp_code");
             $table->timestamp('expired_at');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //Khóa ngoại 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('opts');
+        Schema::dropIfExists('otp');
     }
 };
