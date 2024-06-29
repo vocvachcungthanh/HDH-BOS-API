@@ -75,6 +75,13 @@ class User extends Authenticatable implements JWTSubject
 
     public static function getEmailUser($email)
     {
-        return DB::connection('mysqlQL')->table('users')->where('email', $email)->first();
+        return self::on('mysqlQL')->where('email', $email)->first();
+    }
+
+    public static function createNewsPass($id, $pass)
+    {
+        return self::on('mysqlQL')->where('id', $id)->update([
+            "password" => $pass
+        ]);
     }
 }

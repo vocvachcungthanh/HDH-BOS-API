@@ -22,15 +22,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     private $secretKey;
-
+    private $timeOtp;
+    private $timeNewPass;
     public function __construct()
     {
+
         $this->secretKey = config('jwt.secret');
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'sendOtpEmailForgotPassword', 'verifyOtp']]);
+        $this->timeOtp = env("JWT_OTP", 2);
+        $this->timeNewPass = env("JWT_NEW_PASS", 5);
+        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'sendOtpEmailForgotPassword', 'verifyOtp', 'createNewPass']]);
     }
 
     /**
@@ -56,7 +61,7 @@ class AuthController extends Controller
         if (!$checkLogin) {
             return response()->json([
                 'message' => "Tài khoản hoặc mật khẩu không đúng"
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $remember = $request->get('remember');
@@ -157,7 +162,7 @@ class AuthController extends Controller
                 [
                     'user_id'       => $checkEmail->id,
                     'otp_code'      => $otpCode,
-                    'expired_at'    => Carbon::now()->addSeconds(30), // Mã OPT hết hạn sau 1 phút
+                    'expired_at'    => Carbon::now()->addMinutes($this->timeOtp),
                 ]
             );
 
@@ -170,7 +175,7 @@ class AuthController extends Controller
             // Tạo mã bí mật để bảo vệ email
 
             return response()->json([
-                'data' => $this->createToken($otp->user_id, $otp),
+                'data' => $this->createToken($otp->user_id, $otp, $this->timeOtp * 60), // Thời gian hết hạn là 30s
                 'message' => "Otp đã được gửi thanh công"
             ], Response::HTTP_OK);
         } else {
@@ -196,36 +201,70 @@ class AuthController extends Controller
             'email_token' => 'Không tồn tại mã xác thực',
         ]);
 
-        try {
-            // Giả mã token xem có hợp lệ trong JWT không
-            JWT::decode($request->email_token, new Key($this->secretKey, 'HS256'));
 
-            // Kiểm tra OTP có tồn tại trong csdl không
-            $otp = Otp::getOtp($request->otp_code);
+        // Giả mã token xem có hợp lệ trong JWT không
+        $this->checkToken($request->email_token);
 
-            if (!$otp) {
-                return response()->json([
-                    "error" => $otp,
-                    'message' => "Mã otp không đúng hoặc hết hạn"
-                ], Response::HTTP_BAD_REQUEST);
-            } else {
-                $deleteOtp = Otp::deleteOtp($otp->id);
+        // Kiểm tra OTP có tồn tại trong csdl không
+        $otp = Otp::getOtp($request->otp_code);
 
-                if ($deleteOtp) {
-                    return response()->json([
-                        "data" => $otp->user_id,
-                        'message' => "OTP chính xác"
-                    ], Response::HTTP_OK);
-                } else {
-                    return response()->json([
-                        'message' => "Lỗi không xác thực được OTP"
-                    ], Response::HTTP_OK);
-                }
-            }
-        } catch (\Exception $e) {
+
+        if (!$otp) {
             return response()->json([
-                "error" => $e,
-                "message" => "Thời gian xác thực otp hết hạn "
+                "error" => $otp,
+                'message' => "Mã otp không đúng hoặc hết hạn"
+            ], Response::HTTP_BAD_REQUEST);
+        } else {
+            $deleteOtp = Otp::deleteOtp($otp->id);
+
+            if ($deleteOtp) {
+                return response()->json([
+                    'id' => $otp->user_id,
+                    "data" => $this->createToken($otp->user_id, $otp, $this->timeNewPass * 60), // Thời gian hết hạn của token 5 phút
+                    'message' => "OTP chính xác"
+                ], Response::HTTP_OK);
+            } else {
+                return response()->json([
+                    'message' => "Lỗi không xác thực được OTP"
+                ], Response::HTTP_OK);
+            }
+        }
+    }
+
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 29-06-2024
+     * Description: cập nhật lại mật khẩu
+     */
+
+    public function createNewPass(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'token_new_pass' => 'required'
+        ], [
+            'password.required' => "Mật khẩu không được bỏ trống",
+            'token_new_pass' => 'Token không được bỏ trống',
+        ]);
+
+        // Giả mã token xem có hợp lệ trong JWT không
+        $result = $this->checkToken($request->token_new_pass);
+
+        $userId = $result->user_id;
+        $password = Hash::make($request->password);
+
+        $newPass =  User::createNewsPass($userId, $password);
+
+        if ($newPass) {
+            return response()->json([
+                'data' => $newPass,
+                'message' => "Cập nhật mật khẩu thành công"
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                "error" => $newPass,
+                "message" => "Lỗi không tạo được mật khẩu mới"
             ], Response::HTTP_NOT_FOUND);
         }
     }
@@ -290,17 +329,36 @@ class AuthController extends Controller
      * Description: Hàm tao token
      */
 
-    private function createToken($id, $value)
+    private function createToken($id, $value, $time)
     {
         $payload = [
             'user_id' => $id,          // Subject: ID của người dùng
             'otp' => $value,
-            'exp' => time() + 30,  // Thời gian hết hạn: 30s
+            'exp' => time() + $time  // Thời gian hết hạn
         ];
 
         return JWT::encode($payload, $this->secretKey, 'HS256');
     }
 
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 29-06-2024
+     * Description Kiểm tra token hợp lệ không
+     */
+
+    private function checkToken($token)
+    {
+        try {
+            $result =   JWT::decode($token, new Key($this->secretKey, 'HS256'));
+
+            return $result;
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e,
+                'message' => "Token không hợp lệ"
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
 
     /**
      * Auth: NguyenHuuThanh
