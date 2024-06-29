@@ -34,7 +34,12 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::delete('logout', [AuthController::class, 'logout']);
     Route::post('email-forgot-password', [AuthController::class, 'sendOtpEmailForgotPassword']);
-    Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
+
+    Route::middleware(['checkToken.email'])->group(function () {
+        Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
+    });
+
+    Route::post('new-pass', [AuthController::class, 'createNewPass']);
 });
 
 

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Auth: Nguyen_Huu_Thanh
- * Date By: 27-06-2024
- * Description: CheckTokenEmailMiddleware Xác thực token email khi gửi opt cấp lại mật khẩu
- */
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -36,27 +30,27 @@ class CheckTokenEmailMiddleware
     public function handle(Request $request, Closure $next)
     {
         try {
-            JWT::decode($request->email_token, new Key($this->secretKey, 'HS256'));
+            $decoded = JWT::decode($request->email_token, new Key($this->secretKey, 'HS256'));
         } catch (ExpiredException $e) {
             return response()->json([
                 "error" => "token_expired",
                 "message" => "Thời gian xác thực OTP đã hết hạn."
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_REQUEST_TIMEOUT);
         } catch (BeforeValidException $e) {
             return response()->json([
                 "error" => "token_invalid",
                 "message" => "Token không hợp lệ."
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_REQUEST_TIMEOUT);
         } catch (SignatureInvalidException $e) {
             return response()->json([
                 "error" => "token_invalid",
                 "message" => "Token không hợp lệ."
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_REQUEST_TIMEOUT);
         } catch (\Exception $e) {
             return response()->json([
                 "error" => "token_invalid",
                 "message" => "Token không hợp lệ."
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_REQUEST_TIMEOUT);
         }
 
         return $next($request);
