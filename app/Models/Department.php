@@ -10,13 +10,13 @@ class Department extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $primaryKey = "id";
-    protected $table = 'departments';
+    protected $primaryKey = "PhongBanID";
+    protected $table = 'PhongBan';
 
 
     public static function generateCode()
     {
-        $latestCode = static::latest()->value('code');
+        $latestCode = static::latest()->value('MaPhongBan');
         $prefix = 'PB';
 
         // Nếu không có mã cuối cùng, bắt đầu từ PB001
@@ -31,7 +31,7 @@ class Department extends Model
         // Tạo mã mới và kiểm tra nếu đã tồn tại trong cơ sở dữ liệu
         do {
             $nextCode = $prefix . str_pad($nextId, 3, '0', STR_PAD_LEFT);
-            $existingCode = static::where('code', $nextCode)->exists();
+            $existingCode = static::where('MaPhongBan', $nextCode)->exists();
             $nextId++;
         } while ($existingCode);
 

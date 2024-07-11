@@ -8,7 +8,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Helpers\Helper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -33,14 +33,15 @@ class UserSeeder extends Seeder
          * Date By: 24/06/2024
          * Description: tạo dư liệu mẫu
          */
-        DB::table('users')->insert([
+
+        $users = Helper::insert_with_unicode([
             [
                 'staff_id'          => 1,
                 'company_id'        => 1,
-                'name'              => 'bosdev',
-                'user_name'         => 'bosdev',
-                'email'             => 'vocvachcungthanh@gmail.com',
-                'password'          => Hash::make('admin123'),
+                'name'              => 'Nguyễn hữu Thành',
+                'user_name'         => 'cafedev93',
+                'email'             => 'cafedev93@gmail.com',
+                'password'          => Hash::make('Admin@123'),
                 'remember_token'    => Str::random(60),
                 'created_at'        => now(),
                 'updated_at'        => now()
@@ -52,7 +53,7 @@ class UserSeeder extends Seeder
                 'name'              => 'admin2',
                 'user_name'         => 'admin2',
                 'email'             => 'vocvachcungthanh2@gmail.com',
-                'password'          => Hash::make('admin123'),
+                'password'          => Hash::make('Admin@123'),
                 'remember_token'    => Str::random(60),
                 'created_at'        => now(),
                 'updated_at'        => now()
@@ -69,11 +70,13 @@ class UserSeeder extends Seeder
                 'name'              => 'admin2',
                 'user_name'         => 'admin2',
                 'email'             => 'thanhit28081993.com',
-                'password'          => Hash::make('admin123'),
+                'password'          => Hash::make('Admin@123'),
                 'remember_token'    => Str::random(60),
                 'created_at'        => now(),
                 'updated_at'        => now()
             ]
         ]);
+
+        DB::table('users')->insert($users);
     }
 }

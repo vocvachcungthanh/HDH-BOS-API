@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -75,12 +76,12 @@ class User extends Authenticatable implements JWTSubject
 
     public static function getEmailUser($email)
     {
-        return self::on('mysqlQL')->where('email', $email)->first();
+        return self::on('sqlsrvQL')->where('email', $email)->first();
     }
 
     public static function createNewsPass($id, $pass)
     {
-        return self::on('mysqlQL')->where('id', $id)->update([
+        return self::on('sqlsrvQL')->where('id', $id)->update([
             "password" => $pass
         ]);
     }

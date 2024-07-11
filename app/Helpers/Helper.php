@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\DB;
+
 class Helper
 {
     public static function isNumericArray($arr)
@@ -22,5 +24,18 @@ class Helper
 
         // Nếu tất cả các giá trị đều là số, trả về true
         return true;
+    }
+
+    public static function insert_with_unicode($data)
+    {
+        foreach ($data as &$item) {
+            foreach ($item as $key => $value) {
+                if (is_string($value)) {
+                    $item[$key] = DB::raw("N'$value'");
+                }
+            }
+        }
+
+        return $data;
     }
 }

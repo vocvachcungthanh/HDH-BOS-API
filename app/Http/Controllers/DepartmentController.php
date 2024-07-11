@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Position;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -154,29 +155,39 @@ class DepartmentController extends Controller
         }
     }
 
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 11-07-2024
+     * Description: getListDepartment hiển thị dư liệu table đơn vị
+     */
+
+
     public function getListDepartment()
     {
-        $departments = DB::table('departments as D')
-            ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
-            ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
-            ->selectRaw('
-                D.code,
-                D.name,
-                BL.name as block,
-                (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
-                D.note,
-                LST_Field.name as field,
-                D.id,
-                D.block_id,
-                D.parent_id,
-                D.field_id
-            ')->WHERE('D.status', 1)
+        $departments = DB::table('PhongBan as PB')
+            ->leftJoin('DM_Khoi as K', 'PB.KhoiID', '=', 'K.KhoiID')
+            ->leftJoin('DM_LinhVuc as LV', 'PB.LinhVucID', '=', 'LV.LinhVucID')
+            ->leftJoin('PhongBan as ParentPB', 'ParentPB.PhongBanID', '=', 'PB.PhongBanChaID')
+            ->select([
+                'PB.MaPhongBan AS code',
+                'PB.TenPhongBan AS name',
+                'K.TenKhoi AS block',
+                'ParentPB.TenPhongBan AS parent',
+                'PB.GhiChu AS note',
+                'LV.TenLinhVuc AS field',
+                'PB.PhongBanID AS id',
+                'PB.KhoiID AS block_id',
+                'PB.PhongBanChaID AS parent_id',
+                'PB.LinhVucID AS field_id',
+            ])
+            ->where('PB.TrangThai', 1)
+            ->orderBy('block_id')
             ->get();
 
         return response()->json([
             'code' => 200,
-            'data' => $this->getListDepartmentTree($departments)
-        ], 200);
+            'data' => $departments
+        ], Response::HTTP_OK);
     }
 
     public function deleteDepartment(Request $request)
@@ -361,7 +372,6 @@ class DepartmentController extends Controller
                 ->get();
 
             return response()->json([
-                'code' => 200,
                 'data' => $this->getListDepartmentTree($search)
             ], 200);
         }

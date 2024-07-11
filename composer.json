@@ -27,12 +27,14 @@
     },
     "autoload": {
         "files": [
-            "app/Helpers/TimeHelper.php"
+            "app/Helpers/TimeHelper.php",
+            "app/Helpers/Helper.php"
         ],
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "App\\Scopes\\": "app/Scopes/"
         }
     },
     "autoload-dev": {

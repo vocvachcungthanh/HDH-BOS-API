@@ -35,14 +35,14 @@ class DatabaseConnectionMiddleware
 
         // Thiết lập kết nối đến cơ sở dữ liệu của công ty
         if ($ip && $port && $database && $username) {
-            Config::set('database.connections.mysql.host', $ip);
-            Config::set('database.connections.mysql.port', $port);
-            Config::set('database.connections.mysql.database', $database);
-            Config::set('database.connections.mysql.username', $username);
-            Config::set('database.connections.mysql.password', $password);
+            Config::set('database.connections.sqlsrv.host', $ip);
+            Config::set('database.connections.sqlsrv.port', $port);
+            Config::set('database.connections.sqlsrv.database', $database);
+            Config::set('database.connections.sqlsrv.username', $username);
+            Config::set('database.connections.sqlsrv.password', $password);
             // Kết nối lại cơ sở dữ liệu
-            DB::purge('mysql');
-            DB::reconnect('mysql');
+            DB::purge('sqlsrv');
+            DB::reconnect('sqlsrv');
             // \Artisan::call('migrate');
         }
 

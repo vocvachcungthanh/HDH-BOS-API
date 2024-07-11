@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Helper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +13,7 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('company')->insert([
+        $company = Helper::insert_with_unicode([
             [
                 'name'              => 'Công ty CP Giải Pháp Quản Trị BOS',
                 'address'           => 'Tầng 10, Tòa 15T Nguyễn Thị Định, Phường Trung Hòa, Cầu Giấy, Hà Nội',
@@ -26,5 +27,7 @@ class CompanySeeder extends Seeder
                 'updated_at'        => now()
             ],
         ]);
+
+        DB::table('company')->insert($company);
     }
 }
