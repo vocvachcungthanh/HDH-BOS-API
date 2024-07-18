@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Position  extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    protected $primaryKey = "id";
-    protected $table = 'postions';
+    protected $primaryKey = "ViTriID";
+    protected $table = 'DM_viTri';
 
     public static function generateCode()
     {
@@ -34,5 +35,24 @@ class Position  extends Model
         } while ($existingCode);
 
         return $nextCode;
+    }
+
+    public static function getPositionModel()
+    {
+        $position = DB::table('DM_ViTri as P')
+            ->leftJoin('PhongBan as PB', 'P.PhongBanID', '=', 'PB.PhongBanID')
+            ->leftJoin('DM_LoaiTaiKhoan as LTK', 'P.LoaiTaiKhoanID', '=', 'LTK.LoaiTaiKhoanID')
+            ->selectRaw('
+            Mavitri As code,
+            TenViTri As name,
+            LTK.TenLoaiTaiKhoan As name_account_type,
+            QuyenLoi As benefits,
+            QuyenHan As permissions,
+            P.PhongBanID As department_id
+        ')
+            ->WHERE('P.TrangThai', 1)
+            ->get();
+
+        return $position;
     }
 }

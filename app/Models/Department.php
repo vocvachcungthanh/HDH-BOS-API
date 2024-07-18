@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Department extends Model
 {
@@ -46,5 +47,37 @@ class Department extends Model
         static::creating(function ($model) {
             $model->code = static::generateCode();
         });
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 11-07-2024
+     * Description: getDepartment lấy danh sách đơn vị hiển thị table
+     */
+
+    public static function getDepartmentModel()
+    {
+        $department = DB::table('PhongBan as PB')
+            ->leftJoin('DM_Khoi as K', 'PB.KhoiID', '=', 'K.KhoiID')
+            ->leftJoin('DM_LinhVuc as LV', 'PB.LinhVucID', '=', 'LV.LinhVucID')
+            ->leftJoin('PhongBan as ParentPB', 'ParentPB.PhongBanID', '=', 'PB.PhongBanChaID')
+            ->select([
+                'PB.MaPhongBan AS code',
+                'PB.TenPhongBan AS name',
+                'K.TenKhoi AS block',
+                'ParentPB.TenPhongBan AS parent',
+                'PB.GhiChu AS note',
+                'LV.TenLinhVuc AS field',
+                'PB.PhongBanID AS id',
+                'PB.KhoiID AS block_id',
+                'PB.PhongBanChaID AS parent_id',
+                'PB.LinhVucID AS field_id',
+                'PB.CapPhongBan As departmentLevel'
+            ])
+            ->where('PB.TrangThai', 1)
+            ->orderBy('block_id')
+            ->get();
+
+        return $department;
     }
 }
