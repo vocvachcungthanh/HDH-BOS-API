@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Helper;
 use App\Models\Department;
 use App\Models\Position;
+use App\Models\Staff;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -161,32 +162,13 @@ class DepartmentController extends Controller
      * Description: getListDepartment hiển thị dư liệu table đơn vị
      */
 
-
     public function getListDepartment()
     {
-        $departments = DB::table('PhongBan as PB')
-            ->leftJoin('DM_Khoi as K', 'PB.KhoiID', '=', 'K.KhoiID')
-            ->leftJoin('DM_LinhVuc as LV', 'PB.LinhVucID', '=', 'LV.LinhVucID')
-            ->leftJoin('PhongBan as ParentPB', 'ParentPB.PhongBanID', '=', 'PB.PhongBanChaID')
-            ->select([
-                'PB.MaPhongBan AS code',
-                'PB.TenPhongBan AS name',
-                'K.TenKhoi AS block',
-                'ParentPB.TenPhongBan AS parent',
-                'PB.GhiChu AS note',
-                'LV.TenLinhVuc AS field',
-                'PB.PhongBanID AS id',
-                'PB.KhoiID AS block_id',
-                'PB.PhongBanChaID AS parent_id',
-                'PB.LinhVucID AS field_id',
-            ])
-            ->where('PB.TrangThai', 1)
-            ->orderBy('block_id')
-            ->get();
+        $departments = Department::getDepartmentModel();
 
         return response()->json([
             'code' => 200,
-            'data' => $departments
+            'data' => $this->getListDepartmentTree($departments)
         ], Response::HTTP_OK);
     }
 
@@ -218,7 +200,7 @@ class DepartmentController extends Controller
         }
     }
 
-    public function trashDepartemntCount()
+    public function trashDepartmentCount()
     {
         $total = Department::where('status', 0)->count();
 
@@ -698,19 +680,7 @@ class DepartmentController extends Controller
 
     private function getListDepartmentTree($departments)
     {
-        $postions = DB::table('postions as P')
-            ->leftJoin('LST_Account_Type as AT', 'P.account_type_id', '=', 'AT.id')
-            ->leftJoin('departments as D', 'P.department_id', '=', 'D.id')
-            ->selectRaw('
-                p.code,
-                P.name,
-                AT.name as name_account_type,
-                benefits,
-                permissions,
-                P.department_id
-            ')
-            ->WHERE('P.status', 1)
-            ->get();
+        $positions = Position::getPositionModel();
 
         $tree = [];
         $stt = 1;
@@ -721,15 +691,17 @@ class DepartmentController extends Controller
                 'id'                => $item->id,
                 'code'              => $item->code,
                 'name'              => $item->name,
-                'block_name'        => $item->block,
-                'parent_name'       => $item->parent,
+                'block'             => $item->block,
+                'parent'            => $item->parent,
                 'note'              => $item->note,
-                'field_name'        => $item->field,
+                'field'             => $item->field,
                 'block_id'          => $item->block_id,
                 'field_id'          => $item->field_id,
                 'parent_id'         => $item->parent_id,
-                'postions'          => $this->subordinatePosition($postions, $item->id),
-                'subordinate'   => $this->subordinate($departments, $item->id, $postions),
+                'department_level'   => $item->departmentLevel,
+                'positions'         => $this->subordinatePosition($positions, $item->id),
+                'subordinate'       => $this->subordinate($departments, $item->id, $positions),
+                'staffs'            => $this->staffId($item->id)
             ];
 
             $tree[] = $subtree;
@@ -738,7 +710,7 @@ class DepartmentController extends Controller
         return $tree;
     }
 
-    private function subordinate($departments, $parentId, $postions)
+    private function subordinate($departments, $parentId)
     {
         $tree = [];
         $stt = 1;
@@ -751,12 +723,12 @@ class DepartmentController extends Controller
                     'id'                => $item->id . '_' . $item->code,
                     'code'              => $item->code,
                     'name'              => $item->name,
-                    'block_name'        => $item->block,
-                    'parent_name'       => $item->parent,
+                    'block'             => $item->block,
+                    'parent'            => $item->parent,
                     'note'              => $item->note,
-                    'field_name'        => $item->field,
-                    'postions'          => $this->subordinatePosition($postions, $item->id),
-                    'children'   => $this->subordinate($departments, $item->id, $postions)
+                    'field'             => $item->field,
+                    'department_level'  => $item->departmentLevel,
+                    'children'    => $this->subordinate($departments, $item->id)
                 ];
 
                 $tree[] = $subtree;
@@ -775,6 +747,27 @@ class DepartmentController extends Controller
                 $item->stt = $stt++;
                 $data[] = $item;
             }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 18-07-2024
+     * Description: Lấy nhân viên theo phòng ban id
+     */
+
+    private function staffId($id)
+    {
+        $staffs = Staff::getStaffId($id);
+
+        $data = [];
+        $stt = 1;
+
+        foreach ($staffs as $item) {
+            $item->stt = $stt++;
+            $data[] = $item;
         }
 
         return $data;
