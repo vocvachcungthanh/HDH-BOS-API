@@ -8,21 +8,16 @@ class Helper
 {
     public static function isNumericArray($arr)
     {
-        // Kiểm tra xem biến $arr có phải là mảng không
-
         if (!is_array($arr)) {
             return false;
         }
 
-        // Duyệt qua mỗi phần tử trong mảng
         foreach ($arr as $value) {
-            // Kiểm tra xem mỗi giá trị có phải là số không
             if (!is_numeric($value)) {
                 return false;
             }
         }
 
-        // Nếu tất cả các giá trị đều là số, trả về true
         return true;
     }
 
@@ -37,5 +32,16 @@ class Helper
         }
 
         return $data;
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 19-07-2024
+     * Description: prepareUnicodeSearch tìm kiếm tiếng việt với sql server
+     */
+
+    public static function prepareUnicode($string)
+    {
+        return DB::raw("$string COLLATE SQL_Latin1_General_CP1_CI_AS");
     }
 }

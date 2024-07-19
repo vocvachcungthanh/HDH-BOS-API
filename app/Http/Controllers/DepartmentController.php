@@ -325,33 +325,7 @@ class DepartmentController extends Controller
                 ]
             ], 400);
         } else {
-            $search = DB::table('departments as D')
-                ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
-                ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
-                ->leftJoin('departments as parentDept', 'parentDept.id', '=', 'D.parent_id')
-                ->selectRaw('
-                D.code,
-                D.name,
-                BL.name as block,
-                (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
-                parentDept.name as parent_name,
-                D.note,
-                LST_Field.name as field,
-                D.id,
-                D.block_id,
-                D.parent_id,
-                D.field_id
-            ')
-                ->where('D.status', 1)
-                ->where(function ($query) use ($keySearch) {
-                    $query->where('D.code', 'like', '%' . $keySearch . '%')
-                        ->orWhere('D.name', 'like', '%' . $keySearch . '%')
-                        ->orWhere('BL.name', 'like', '%' . $keySearch . '%')
-                        ->orWhere('LST_Field.name', 'like', '%' . $keySearch . '%')
-                        ->orWhere('D.note', 'like', '%' . $keySearch . '%')
-                        ->orWhere('parentDept.name', 'like', '%' . $keySearch . '%');
-                })
-                ->get();
+            $search = Department::searchDepartmentModal($keySearch);
 
             return response()->json([
                 'data' => $this->getListDepartmentTree($search)
