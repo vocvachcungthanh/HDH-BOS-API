@@ -11,4 +11,11 @@ class Company  extends Model
     protected $guarded = [];
     protected $primaryKey = "id";
     protected $table = 'company';
+
+    public static function getCompanyId($id)
+    {
+        return  static::leftJoin('hosting', 'company.hosting_id', '=', 'hosting.id')
+            ->where('company.id', $id)
+            ->first();
+    }
 }

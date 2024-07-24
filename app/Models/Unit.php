@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Helper;
 
-class Department extends Model
+class Unit extends Model
 {
     use HasFactory;
 
@@ -56,7 +56,7 @@ class Department extends Model
      * Description: getDepartment lấy danh sách đơn vị hiển thị table
      */
 
-    public static function getDepartmentModel()
+    public static function getUnitModel()
     {
         $department = DB::table('PhongBan as PB')
             ->leftJoin('DM_Khoi as K', 'PB.KhoiID', '=', 'K.KhoiID')
@@ -73,7 +73,7 @@ class Department extends Model
                 'PB.KhoiID AS block_id',
                 'PB.PhongBanChaID AS parent_id',
                 'PB.LinhVucID AS field_id',
-                'PB.CapPhongBan As departmentLevel'
+                'PB.CapPhongBan As unit_level'
             ])
             ->where('PB.TrangThai', 1)
             ->orderBy('block_id')
@@ -81,7 +81,8 @@ class Department extends Model
 
         return $department;
     }
-    public static function searchDepartmentModal(String $keySearch)
+
+    public static function searchUnitModal(String $keySearch)
     {
 
 
@@ -100,7 +101,7 @@ class Department extends Model
                 'PB.KhoiID AS block_id',
                 'PB.PhongBanChaID AS parent_id',
                 'PB.LinhVucID AS field_id',
-                'PB.CapPhongBan As departmentLevel'
+                'PB.CapPhongBan As unit_level'
             ])
             ->where(function ($query) use ($keySearch) {
                 $query->where(Helper::prepareUnicode("PB.MaPhongBan"), 'like', Helper::prepareUnicode("N'%$keySearch%'"))
