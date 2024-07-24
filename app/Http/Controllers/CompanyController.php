@@ -38,9 +38,7 @@ class CompanyController extends Controller
      */
     public function show(string $id)
     {
-        $company = Company::leftJoin('hosting', 'company.hosting_id', '=', 'hosting.id')
-            ->where('company.id', $id)
-            ->first();
+        $company = Company::getCompanyId($id);
 
         if ($company) {
 

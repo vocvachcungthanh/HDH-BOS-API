@@ -78,11 +78,13 @@ class AuthController extends Controller
      * Date: 21/06/2024
      *@logout xử lý đăng xuất
      */
-    public function logout()
+    public function logout(Request $request)
     {
         try {
-            $userId = Auth::user()->id;
-            $accessToken = "";
+            $accessToken = trim(str_replace('Bearer', '', $request->header('Authorization')));
+
+            $userId = intval($request->header('id_user'));
+
             User::updateLastSession($userId, $accessToken);
             Auth::logout();
 
@@ -106,6 +108,7 @@ class AuthController extends Controller
     public function refresh(Request $request)
     {
         $refreshToken = $request->refresh_token;
+
         $remember = $request->remember;
 
         try {
@@ -230,7 +233,6 @@ class AuthController extends Controller
             }
         }
     }
-
 
     /**
      * Auth: Nguyen_Huu_Thanh

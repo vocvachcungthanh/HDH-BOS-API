@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CompanySeeder::class,
             HostingSeeder::class,
+            SlicerSeeder::class
         ]);
     }
 }

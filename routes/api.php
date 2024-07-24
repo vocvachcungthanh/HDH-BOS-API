@@ -5,12 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\FieldController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\PositionController;
-use App\Http\Controllers\SliderController;
-use PharIo\Manifest\Author;
+use App\Http\Controllers\SlicerController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,19 +57,19 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('field', [FieldController::class, 'index']);
 
-        Route::get('department', [DepartmentController::class, 'index']);
-        Route::get('trash-department-list', [DepartmentController::class, 'getTrashDepartment']);
-        Route::get('create-code-department', [DepartmentController::class, 'createAutoCode']);
-        Route::get('trash-department-count', [DepartmentController::class, 'trashDepartemntCount']);
-        Route::get('department-list', [DepartmentController::class, 'getListDepartment']);
-        Route::post('department-update', [DepartmentController::class, 'update']);
-        Route::post('department-create', [DepartmentController::class, 'create']);
-        Route::post('delete-department', [DepartmentController::class, 'deleteDepartment']);
-        Route::post('empty-department', [DepartmentController::class, 'emptyTrashDepartment']);
-        Route::post('restore-department', [DepartmentController::class, 'restoreTranshDepartment']);
-        Route::get('search-department/{keySearch}', [DepartmentController::class, 'searchDepartment']);
-        Route::post('search-slicer-unit', [DepartmentController::class, 'getSearchSlicerUnit']);
-        Route::get('org-chart', [DepartmentController::class, 'getOrgChart']);
+        Route::get('unit', [UnitController::class, 'index']);
+        Route::get('trash-unit-list', [UnitController::class, 'getTrashUnit']);
+        Route::get('create-code-unit', [UnitController::class, 'createAutoCode']);
+        Route::get('trash-unit-count', [UnitController::class, 'trashUnitCount']);
+        Route::get('unit-list', [UnitController::class, 'getListUnit']);
+        Route::post('unit-update', [UnitController::class, 'update']);
+        Route::post('unit-create', [UnitController::class, 'create']);
+        Route::post('delete-unit', [UnitController::class, 'deleteUnit']);
+        Route::post('empty-unit', [UnitController::class, 'emptyTrashUnit']);
+        Route::post('restore-Unit', [UnitController::class, 'restoreTranshUnit']);
+        Route::get('search-unit/{keySearch}', [UnitController::class, 'searchUnit']);
+        Route::post('search-slicer-unit', [UnitController::class, 'getSearchSlicerUnit']);
+        Route::get('org-chart', [UnitController::class, 'getOrgChart']);
 
         Route::post('positions/{page}', [PositionController::class, 'index']);
         Route::get('create-code-position', [PositionController::class, 'createAutoCode']);
@@ -79,7 +80,7 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('account-type', [AccountTypeController::class, 'index']);
 
-        Route::get('slider-list', [SliderController::class, 'getSlider']);
-        Route::post('slicer-setting-update', [SliderController::class, 'updateSlider']);
+        Route::get('slicer-list/{type}', [SlicerController::class, 'getSlicerType']);
+        Route::post('slicer-setting-update', [SlicerController::class, 'updateSlider']);
     });
 });

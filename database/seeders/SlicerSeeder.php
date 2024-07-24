@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Helper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +13,7 @@ class SlicerSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('slicer')->insert([
+        $slicer = Helper::insert_with_unicode([
             [
                 'name'          => 'slicerCode',
                 'note'          => 'slicer mã phòng ban',
@@ -95,7 +96,9 @@ class SlicerSeeder extends Seeder
                 'type'          => 'postion',
                 'created_at'    => now(),
                 'updated_at'    => now()
-            ],
+            ]
         ]);
+
+        DB::table('slicer')->insert($slicer);
     }
 }

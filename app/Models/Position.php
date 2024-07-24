@@ -48,7 +48,7 @@ class Position  extends Model
             LTK.TenLoaiTaiKhoan As name_account_type,
             QuyenLoi As benefits,
             QuyenHan As permissions,
-            P.PhongBanID As department_id
+            P.PhongBanID As unit_id
         ')
             ->WHERE('P.TrangThai', 1)
             ->get();

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
-use App\Models\Department;
+use App\Models\Unit;
 use App\Models\Position;
 use App\Models\Staff;
 
@@ -14,36 +14,36 @@ use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isEmpty;
 
-class DepartmentController extends Controller
+class UnitController extends Controller
 {
     public function index()
     {
-        $departments = Department::select('id', 'name', 'field_id', 'block_id', 'parent_id')->where('status', 1)->get();
+        $units = Unit::select('id', 'name', 'field_id', 'block_id', 'parent_id')->where('status', 1)->get();
 
         return response()->json([
             'code'  => 200,
-            'data'  => $this->departmentsTree($departments)
+            'data'  => $this->unitsTree($units)
         ], 200);
     }
 
-    private function departmentsTree($departments, $parentId = 0)
+    private function unitsTree($units, $parentId = 0)
     {
-        $department = [];
+        $unit = [];
 
-        foreach ($departments as $item) {
+        foreach ($units as $item) {
             if ($item->parent_id == $parentId) {
-                $departmentsTree = [
+                $unitsTree = [
                     'key' => $item->id,
                     'title' => $item->name,
                     'value' => $item->id,
-                    'children' => $this->departmentsTree($departments, $item->id)
+                    'children' => $this->unitsTree($units, $item->id)
                 ];
 
-                $department[] = $departmentsTree;
+                $unit[] = $unitsTree;
             }
         }
 
-        return $department;
+        return $unit;
     }
 
     public function create(Request $request)
@@ -58,11 +58,11 @@ class DepartmentController extends Controller
             ], 400);
         }
 
-        $create = Department::create([
+        $create = unit::create([
             'name'          => $request->name,
             'code'          => $request->code,
             'note'          => $request->desc,
-            'parent_id'     => $request->department_id,
+            'parent_id'     => $request->unit_id,
             'field_id'      => $request->field_id,
             'block_id'      => $request->block_id,
             'status'        => 1,
@@ -73,8 +73,8 @@ class DepartmentController extends Controller
             return response()->json([
                 'code' => 200,
                 'data' =>  [
-                    'departemnt' => $create,
-                    'code_next' => Department::generateCode()
+                    'unit' => $create,
+                    'code_next' => unit::generateCode()
                 ],
                 'message' => "Thêm phòng ban thành công"
 
@@ -110,10 +110,10 @@ class DepartmentController extends Controller
         }
 
 
-        $update = Department::where('id', $request->id)->update([
+        $update = unit::where('id', $request->id)->update([
             'name'          => $request->name,
             'note'          => $request->desc,
-            'parent_id'     => $request->department_id,
+            'parent_id'     => $request->unit_id,
             'field_id'      => $request->field_id,
             'block_id'      => $request->block_id,
             'updated_at'    => now()
@@ -139,7 +139,7 @@ class DepartmentController extends Controller
 
     public function createAutoCode()
     {
-        $code = Department::generateCode();
+        $code = unit::generateCode();
 
         if ($code) {
             return response()->json([
@@ -159,29 +159,142 @@ class DepartmentController extends Controller
     /**
      * Auth: Nguyen_Huu_Thanh
      * Date By: 11-07-2024
-     * Description: getListDepartment hiển thị dư liệu table đơn vị
+     * Description: getListUnit hiển thị dánh sách đợn vị 'Table"
      */
 
-    public function getListDepartment()
+    public function getListUnit()
     {
-        $departments = Department::getDepartmentModel();
+        $units = unit::getUnitModel();
 
         return response()->json([
             'code' => 200,
-            'data' => $this->getListDepartmentTree($departments)
+            'data' => $this->getListUnitTree($units)
         ], Response::HTTP_OK);
     }
 
-    public function deleteDepartment(Request $request)
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 24-07-2024
+     * Description: getListUnitTree tạo ra cấp con 
+     */
+
+    private function getListUnitTree($units)
     {
-        $check  = $this->confirmationBeforeDeletionDepartment($request->id);
+        $positions = Position::getPositionModel();
+
+        $tree = [];
+        $stt = 1;
+
+        foreach ($units as $item) {
+            $subtree = [
+                'stt'               => $stt++,
+                'id'                => $item->id,
+                'code'              => $item->code,
+                'name'              => $item->name,
+                'block'             => $item->block,
+                'parent'            => $item->parent,
+                'note'              => $item->note,
+                'field'             => $item->field,
+                'block_id'          => $item->block_id,
+                'field_id'          => $item->field_id,
+                'parent_id'         => $item->parent_id,
+                'unit_level'        => $item->unit_level,
+                'positions'         => $this->subordinatePosition($positions, $item->id),
+                'subordinate'       => $this->subordinate($units, $item->id, $positions),
+                'staffs'            => $this->staffId($item->id)
+            ];
+
+            $tree[] = $subtree;
+        }
+
+        return $tree;
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 24-07-2024
+     * Description: subordinatePosition hàm tạo vị trí trực thuộc theo id phong ban
+     */
+
+    private function subordinatePosition($position, $id)
+    {
+        $data = [];
+        $stt = 1;
+        foreach ($position as $item) {
+            if ($item->unit_id == $id) {
+                $item->stt = $stt++;
+                $data[] = $item;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 24-07-2024
+     * Description: subordinate cấp con theo parentId
+     */
+
+    private function subordinate($units, $parentId)
+    {
+        $tree = [];
+        $stt = 1;
+        foreach ($units as $item) {
+
+            if ($item->parent_id == $parentId) {
+
+                $subtree = [
+                    'stt'         => $stt++,
+                    'id'          => $item->id . '_' . $item->code,
+                    'code'        => $item->code,
+                    'name'        => $item->name,
+                    'block'       => $item->block,
+                    'parent'      => $item->parent,
+                    'note'        => $item->note,
+                    'field'       => $item->field,
+                    'unit_level'  => $item->unit_level,
+                    'children'    => $this->subordinate($units, $item->id)
+                ];
+
+                $tree[] = $subtree;
+            }
+        }
+
+        return $tree;
+    }
+
+    /**
+     * Auth: Nguyen_Huu_Thanh
+     * Date By: 18-07-2024
+     * Description: Lấy nhân viên theo phòng ban $id
+     */
+
+    private function staffId($id)
+    {
+        $staffs = Staff::getStaffId($id);
+
+        $data = [];
+        $stt = 1;
+
+        foreach ($staffs as $item) {
+            $item->stt = $stt++;
+            $data[] = $item;
+        }
+
+        return $data;
+    }
+
+    public function deleteUnit(Request $request)
+    {
+        $check  = $this->confirmationBeforeDeletionUnit($request->id);
 
         if ($check !== true) {
             return $check;
         }
 
         if ($check) {
-            $delete = Department::where('id', $request->id)->update(['status' => 0]);
+            $delete = unit::where('id', $request->id)->update(['status' => 0]);
 
             if ($delete > 0) {
                 return response()->json([
@@ -200,9 +313,9 @@ class DepartmentController extends Controller
         }
     }
 
-    public function trashDepartmentCount()
+    public function trashUnitCount()
     {
-        $total = Department::where('status', 0)->count();
+        $total = unit::where('status', 0)->count();
 
         return response()->json([
             'code' => 200,
@@ -210,16 +323,16 @@ class DepartmentController extends Controller
         ], 200);
     }
 
-    public function getTrashDepartment()
+    public function getTrashUnit()
     {
-        $departments = DB::table('departments as D')
+        $units = DB::table('units as D')
             ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
             ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
             ->selectRaw('
             D.code,
             D.name,
             BL.name as block,
-            (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
+            (SELECT Name FROM units WHERE units.id = D.parent_id) as parent,
             D.note,
             LST_Field.name as field,
             D.id
@@ -229,18 +342,18 @@ class DepartmentController extends Controller
 
         $stt = 1;
 
-        foreach ($departments as $item) {
+        foreach ($units as $item) {
 
             $item->stt = $stt++;
         }
 
         return response()->json([
             'code' => 200,
-            'data' => $departments
+            'data' => $units
         ], 200);
     }
 
-    public function emptyTrashDepartment(Request $request)
+    public function emptyTrashUnit(Request $request)
     {
         $idsToDelete = $request->ids;
 
@@ -255,7 +368,7 @@ class DepartmentController extends Controller
             ], 400);
         }
 
-        $deleteAll = Department::whereIn('id', $idsToDelete)->delete();
+        $deleteAll = unit::whereIn('id', $idsToDelete)->delete();
 
         if ($deleteAll > 0) {
             return response()->json([
@@ -280,7 +393,7 @@ class DepartmentController extends Controller
         }
     }
 
-    public function restoreTranshDepartment(Request $request)
+    public function restoreTranshUnit(Request $request)
     {
         $idUpdate = $request->ids;
 
@@ -295,7 +408,7 @@ class DepartmentController extends Controller
             ], 400);
         }
 
-        $updateAll = Department::whereIn('id', $idUpdate)->update(['status' => 1]);
+        $updateAll = unit::whereIn('id', $idUpdate)->update(['status' => 1]);
 
         if ($updateAll > 0) {
             return response()->json([
@@ -315,7 +428,7 @@ class DepartmentController extends Controller
         }
     }
 
-    public function searchDepartment(string $keySearch)
+    public function searchUnit(string $keySearch)
     {
         if (!isEmpty($keySearch)) {
             return response()->json([
@@ -325,24 +438,24 @@ class DepartmentController extends Controller
                 ]
             ], 400);
         } else {
-            $search = Department::searchDepartmentModal($keySearch);
+            $search = unit::searchUnitModal($keySearch);
 
             return response()->json([
-                'data' => $this->getListDepartmentTree($search)
+                'data' => $this->getListUnitTree($search)
             ], 200);
         }
     }
 
     public function getSearchSlicerUnit(Request $request)
     {
-        $departments = DB::table('departments as D')
+        $units = DB::table('units as D')
             ->leftJoin('LST_Block as BL', 'D.block_id', '=', 'BL.id')
             ->leftJoin('LST_Field', 'D.field_id', '=', 'LST_Field.id')
             ->selectRaw('
                 D.code,
                 D.name,
                 BL.name as block,
-                (SELECT Name FROM departments WHERE departments.id = D.parent_id) as parent,
+                (SELECT Name FROM units WHERE units.id = D.parent_id) as parent,
                 D.note,
                 LST_Field.name as field,
                 D.id,
@@ -353,13 +466,13 @@ class DepartmentController extends Controller
             ->where('D.status', 1)
             ->get();
 
-        $departemntTree =  $this->getListDepartmentTree($departments);
+        $unitTree =  $this->getListUnitTree($units);
 
         $params = $request->only(['block_id', 'id', 'parent_id', 'field_id']);
 
         $filteredData = [];
 
-        foreach ($departemntTree as $item) {
+        foreach ($unitTree as $item) {
 
             $blockIdMatch = isset($params['block_id']) ? $item['block_id'] == $params['block_id'] : true;
             $idMatch = isset($params['id']) ? $item['id'] == $params['id'] : true;
@@ -597,12 +710,12 @@ class DepartmentController extends Controller
         ], 200);
     }
 
-    private function confirmationBeforeDeletionDepartment($id)
+    private function confirmationBeforeDeletionUnit($id)
     {
         // Kiểm trả dữ liệu truyền lên hợp lệ không
         if (!is_numeric($id)) {
             return response()->json([
-                'code' => 400,
+                'code'   => 400,
                 'errors' => [
                     'message' => "Dữ liệu phòng ban cần xóa không hợp lệ"
                 ]
@@ -610,12 +723,12 @@ class DepartmentController extends Controller
         }
 
         // Kiểm tra xem  phòng bạn có tồn tại phòng ban con không
-        if (Department::where([
+        if (Unit::where([
             'parent_id' => $id,
             'status'    => 1
         ])->count() > 0) {
             return response()->json([
-                'code' => 400,
+                'code'   => 400,
                 'errors' => [
                     'message' => "Không thể xóa do phòng ban, bạn muốn xóa đang tồn tại phòng ban con"
                 ]
@@ -625,11 +738,11 @@ class DepartmentController extends Controller
         // kiểm tra xme phòng ban có ví trí chưa
 
         if (Position::where([
-            'department_id' => $id,
+            'unit_id'   => $id,
             'status'    => 1,
         ])->count() > 0) {
             return response()->json([
-                'code' => 400,
+                'code'   => 400,
                 'errors' => [
                     'message' => "Không thể xóa do phòng bạn bạn muốn xóa đang có vị trí"
                 ]
@@ -640,9 +753,9 @@ class DepartmentController extends Controller
 
         // Kiểm tra phòng ban cần xóa tồn tại không
 
-        if (Department::where('id', $id)->count() <= 0) {
+        if (Unit::where('id', $id)->count() <= 0) {
             return response()->json([
-                'code' => 400,
+                'code'   => 400,
                 'errors' => [
                     'message' => "Phòng ban cần xóa không tồn tại"
                 ]
@@ -652,106 +765,11 @@ class DepartmentController extends Controller
         return true;
     }
 
-    private function getListDepartmentTree($departments)
-    {
-        $positions = Position::getPositionModel();
-
-        $tree = [];
-        $stt = 1;
-
-        foreach ($departments as $item) {
-            $subtree = [
-                'stt'               => $stt++,
-                'id'                => $item->id,
-                'code'              => $item->code,
-                'name'              => $item->name,
-                'block'             => $item->block,
-                'parent'            => $item->parent,
-                'note'              => $item->note,
-                'field'             => $item->field,
-                'block_id'          => $item->block_id,
-                'field_id'          => $item->field_id,
-                'parent_id'         => $item->parent_id,
-                'department_level'   => $item->departmentLevel,
-                'positions'         => $this->subordinatePosition($positions, $item->id),
-                'subordinate'       => $this->subordinate($departments, $item->id, $positions),
-                'staffs'            => $this->staffId($item->id)
-            ];
-
-            $tree[] = $subtree;
-        }
-
-        return $tree;
-    }
-
-    private function subordinate($departments, $parentId)
-    {
-        $tree = [];
-        $stt = 1;
-        foreach ($departments as $item) {
-
-            if ($item->parent_id == $parentId) {
-
-                $subtree = [
-                    'stt'               => $stt++,
-                    'id'                => $item->id . '_' . $item->code,
-                    'code'              => $item->code,
-                    'name'              => $item->name,
-                    'block'             => $item->block,
-                    'parent'            => $item->parent,
-                    'note'              => $item->note,
-                    'field'             => $item->field,
-                    'department_level'  => $item->departmentLevel,
-                    'children'    => $this->subordinate($departments, $item->id)
-                ];
-
-                $tree[] = $subtree;
-            }
-        }
-
-        return $tree;
-    }
-
-    private function subordinatePosition($postions, $id)
-    {
-        $data = [];
-        $stt = 1;
-        foreach ($postions as $item) {
-            if ($item->department_id == $id) {
-                $item->stt = $stt++;
-                $data[] = $item;
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Auth: Nguyen_Huu_Thanh
-     * Date By: 18-07-2024
-     * Description: Lấy nhân viên theo phòng ban id
-     */
-
-    private function staffId($id)
-    {
-        $staffs = Staff::getStaffId($id);
-
-        $data = [];
-        $stt = 1;
-
-        foreach ($staffs as $item) {
-            $item->stt = $stt++;
-            $data[] = $item;
-        }
-
-        return $data;
-    }
-
     private function rules(Request $request)
     {
         $rules = [
             'name'          => 'required',
-            'department_id' => 'required|numeric',
+            'unit_id'       => 'required|numeric',
             'block_id'      => 'required|numeric',
             'field_id'      => 'required|numeric',
         ];
@@ -760,7 +778,7 @@ class DepartmentController extends Controller
             $rules['code'] = 'required';
             $roles['id']   = 'required';
         } else {
-            $rules['code'] = 'required|unique:departments';
+            $rules['code'] = 'required|unique:units';
         }
 
         return $rules;
@@ -769,16 +787,16 @@ class DepartmentController extends Controller
     private function messages()
     {
         return [
-            'id.required'               => ':attribute cần sửa không tồn tại',
-            'code.required'             => ':attribute không được bỏ trống',
-            'code.unique'               => ':attribute đã tồn tại kiểm tra lại',
-            'name.required'             => ':attribute không được bỏ trống',
-            'department_id.required'    => ':attribute không được bỏ trống',
-            'department_id.numeric'     => ':attribute phòng ban trực thuộc phải là số',
-            'block_id.required'         => ':attribute không được bỏ trống',
-            'block_id.numeric'          => ':attribute khối phải là số',
-            'field_id.required'         => ':attribute không được bỏ trống',
-            'field_id.numeric'          => ':attribute phải là số'
+            'id.required'       => ':attribute cần sửa không tồn tại',
+            'code.required'     => ':attribute không được bỏ trống',
+            'code.unique'       => ':attribute đã tồn tại kiểm tra lại',
+            'name.required'     => ':attribute không được bỏ trống',
+            'unit_id.required'  => ':attribute không được bỏ trống',
+            'unit_id.numeric'   => ':attribute phòng ban trực thuộc phải là số',
+            'block_id.required' => ':attribute không được bỏ trống',
+            'block_id.numeric'  => ':attribute khối phải là số',
+            'field_id.required' => ':attribute không được bỏ trống',
+            'field_id.numeric'  => ':attribute phải là số'
         ];
     }
 
@@ -788,7 +806,7 @@ class DepartmentController extends Controller
             'id'            => "Phòng ban",
             'code'          => "Mã phòng ban",
             'name'          => "Tên phòng ban",
-            'department_id' => "Phòng ban trực thuộc",
+            'unit_id'       => "Phòng ban trực thuộc",
             'block_id'      => "Thuộc khối",
             'field_id'      => "Lĩnh vực"
         ];
