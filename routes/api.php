@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('account-type', [AccountTypeController::class, 'index']);
 
         Route::get('slicer-list/{type}', [SlicerController::class, 'getSlicerType']);
+        Route::get('slicer-setting/{type}', [SlicerController::class, 'getSlicerSettingType']);
         Route::post('slicer-setting-update', [SlicerController::class, 'updateSlider']);
     });
 });
