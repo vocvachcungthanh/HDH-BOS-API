@@ -30,7 +30,7 @@ class Authenticate extends Middleware
             return response()->json([
                 'error' => 'id_user không tồn tại trong headers',
                 'message' => "Bạn không có quyên truy cập tính năng này"
-            ], Response::HTTP_NOT_FOUND);
+            ], Response::HTTP_GONE);
         }
 
         try {
